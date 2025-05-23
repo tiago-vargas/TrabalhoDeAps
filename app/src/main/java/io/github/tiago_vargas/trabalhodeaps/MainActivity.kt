@@ -47,11 +47,11 @@ fun App(context: Context) {
 fun Content(context: Context, modifier: Modifier = Modifier) {
 	val isLoggedIn = remember { mutableStateOf(false) }
 
+	val account = Auth0.getInstance(
+		clientId = context.getString(R.string.com_auth0_client_id),
+		domain = context.getString(R.string.com_auth0_domain),
+	)
 	val attemptLogin = {
-		val account = Auth0.getInstance(
-			clientId = context.getString(R.string.com_auth0_client_id),
-			domain = context.getString(R.string.com_auth0_domain),
-		)
 		val callback = object : Callback<Credentials, AuthenticationException> {
 			override fun onFailure(error: AuthenticationException) {
 				isLoggedIn.value = false
@@ -66,9 +66,24 @@ fun Content(context: Context, modifier: Modifier = Modifier) {
 			.withScheme(context.getString(R.string.com_auth0_scheme))
 			.start(context, callback)
 	}
+	val attemptLogout = {
+		val callback = object : Callback<Void?, AuthenticationException> {
+			override fun onFailure(error: AuthenticationException) {
+				isLoggedIn.value = true
+			}
+
+			override fun onSuccess(result: Void?) {
+				isLoggedIn.value = false
+			}
+		}
+		WebAuthProvider
+			.logout(account)
+			.withScheme(context.getString(R.string.com_auth0_scheme))
+			.start(context, callback)
+	}
 
 	if (isLoggedIn.value) {
-		MainScreen(modifier = modifier)
+		MainScreen(onLogoutClicked = attemptLogout, modifier = modifier)
 	} else {
 		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
 	}
