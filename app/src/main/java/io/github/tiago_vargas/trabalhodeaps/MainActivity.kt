@@ -5,20 +5,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.callback.Callback
@@ -40,7 +33,7 @@ class MainActivity : ComponentActivity() {
 fun App(context: Context) {
 	TrabalhoDeApsTheme {
 		Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-			LoginScreen(
+			Content(
 				context = context,
 				modifier = Modifier
 					.fillMaxSize()
@@ -51,7 +44,7 @@ fun App(context: Context) {
 }
 
 @Composable
-fun LoginScreen(context: Context, modifier: Modifier = Modifier) {
+fun Content(context: Context, modifier: Modifier = Modifier) {
 	val isLoggedIn = remember { mutableStateOf(false) }
 
 	val attemptLogin = {
@@ -63,6 +56,7 @@ fun LoginScreen(context: Context, modifier: Modifier = Modifier) {
 			override fun onFailure(error: AuthenticationException) {
 				isLoggedIn.value = false
 			}
+
 			override fun onSuccess(result: Credentials) {
 				isLoggedIn.value = true
 			}
@@ -73,34 +67,9 @@ fun LoginScreen(context: Context, modifier: Modifier = Modifier) {
 			.start(context, callback)
 	}
 
-	Column(
-		modifier = modifier,
-		verticalArrangement = Arrangement.Center,
-		horizontalAlignment = Alignment.CenterHorizontally,
-	) {
-		if (isLoggedIn.value) {
-			MainScreen()
-		} else {
-			Button(onClick = attemptLogin) {
-				Text("Login")
-			}
-		}
+	if (isLoggedIn.value) {
+		MainScreen(modifier = modifier)
+	} else {
+		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
 	}
-}
-
-@Composable
-fun MainScreen() {
-	Text("Logged In!")
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-	App(LocalContext.current)
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoggedInViewPreview() {
-	MainScreen()
 }
