@@ -15,6 +15,13 @@ android {
 		versionCode = 1
 		versionName = "1.0"
 
+		manifestPlaceholders.putAll(
+			mutableMapOf(
+				"auth0Domain" to "@string/com_auth0_domain",
+				"auth0Scheme" to "@string/com_auth0_scheme",
+			)
+		)
+
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 	}
 
@@ -23,7 +30,7 @@ android {
 			isMinifyEnabled = false
 			proguardFiles(
 				getDefaultProguardFile("proguard-android-optimize.txt"),
-				"proguard-rules.pro"
+				"proguard-rules.pro",
 			)
 		}
 	}
@@ -56,4 +63,6 @@ dependencies {
 	androidTestImplementation(libs.androidx.ui.test.junit4)
 	debugImplementation(libs.androidx.ui.tooling)
 	debugImplementation(libs.androidx.ui.test.manifest)
+	implementation(libs.auth0.auth0)
+	implementation(libs.auth0.jwtdecode)
 }
