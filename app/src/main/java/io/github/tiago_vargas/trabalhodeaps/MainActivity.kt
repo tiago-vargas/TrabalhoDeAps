@@ -89,28 +89,9 @@ fun Content(
 			.withScheme(context.getString(R.string.com_auth0_scheme))
 			.start(context, callback)
 	}
-	val attemptLogout = {
-		val callback = object : Callback<Void?, AuthenticationException> {
-			override fun onFailure(error: AuthenticationException) {
-				coroutineScope.launch {
-					snackbarHostState.showSnackbar(
-						message = context.getString(R.string.an_error_occurred),
-					)
-				}
-			}
-
-			override fun onSuccess(result: Void?) {
-				viewModel.setIsLoggedIn(false)
-			}
-		}
-		WebAuthProvider
-			.logout(account)
-			.withScheme(context.getString(R.string.com_auth0_scheme))
-			.start(context, callback)
-	}
 
 	if (isLoggedIn.value) {
-		LogoutScreen(onLogoutClicked = attemptLogout, modifier = modifier)
+		PetListScreen()
 	} else {
 		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
 	}

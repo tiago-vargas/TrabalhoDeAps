@@ -1,4 +1,5 @@
 <resources>
 	<string name="app_name">TrabalhoDeAps</string>
 	<string name="an_error_occurred">An error occurred</string>
+	<string name="add_pet">Add Pet</string>
 </resources>
