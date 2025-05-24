@@ -110,7 +110,7 @@ fun Content(
 	}
 
 	if (isLoggedIn.value) {
-		MainScreen(onLogoutClicked = attemptLogout, modifier = modifier)
+		LogoutScreen(onLogoutClicked = attemptLogout, modifier = modifier)
 	} else {
 		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
 	}
