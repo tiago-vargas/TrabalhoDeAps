@@ -8,9 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationException
@@ -18,6 +21,7 @@ import com.auth0.android.callback.Callback
 import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,21 +35,28 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App(context: Context) {
+	val snackbarHostState = remember { SnackbarHostState() }
+
 	TrabalhoDeApsTheme {
-		Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+		Scaffold(
+			modifier = Modifier.fillMaxSize(),
+			snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+		) { innerPadding ->
 			Content(
 				context = context,
 				modifier = Modifier
 					.fillMaxSize()
 					.padding(innerPadding),
+				snackbarHostState = snackbarHostState,
 			)
 		}
 	}
 }
 
 @Composable
-fun Content(context: Context, modifier: Modifier = Modifier) {
+fun Content(context: Context, modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState) {
 	val isLoggedIn = remember { mutableStateOf(false) }
+	val coroutineScope = rememberCoroutineScope()
 
 	val account = Auth0.getInstance(
 		clientId = context.getString(R.string.com_auth0_client_id),
@@ -54,7 +65,11 @@ fun Content(context: Context, modifier: Modifier = Modifier) {
 	val attemptLogin = {
 		val callback = object : Callback<Credentials, AuthenticationException> {
 			override fun onFailure(error: AuthenticationException) {
-				isLoggedIn.value = false
+				coroutineScope.launch {
+					snackbarHostState.showSnackbar(
+						message = context.getString(R.string.an_error_occurred),
+					)
+				}
 			}
 
 			override fun onSuccess(result: Credentials) {
@@ -69,7 +84,11 @@ fun Content(context: Context, modifier: Modifier = Modifier) {
 	val attemptLogout = {
 		val callback = object : Callback<Void?, AuthenticationException> {
 			override fun onFailure(error: AuthenticationException) {
-				isLoggedIn.value = true
+				coroutineScope.launch {
+					snackbarHostState.showSnackbar(
+						message = context.getString(R.string.an_error_occurred),
+					)
+				}
 			}
 
 			override fun onSuccess(result: Void?) {
