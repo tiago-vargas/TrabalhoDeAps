@@ -11,10 +11,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.callback.Callback
@@ -28,13 +29,14 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContent {
-			App(this)
+			App(context = this)
 		}
 	}
 }
 
 @Composable
 fun App(context: Context) {
+	val viewModel = viewModel<LoginViewModel>()
 	val snackbarHostState = remember { SnackbarHostState() }
 
 	TrabalhoDeApsTheme {
@@ -44,6 +46,7 @@ fun App(context: Context) {
 		) { innerPadding ->
 			Content(
 				context = context,
+				viewModel = viewModel,
 				modifier = Modifier
 					.fillMaxSize()
 					.padding(innerPadding),
@@ -54,8 +57,13 @@ fun App(context: Context) {
 }
 
 @Composable
-fun Content(context: Context, modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState) {
-	val isLoggedIn = remember { mutableStateOf(false) }
+fun Content(
+	context: Context,
+	viewModel: LoginViewModel,
+	modifier: Modifier = Modifier,
+	snackbarHostState: SnackbarHostState,
+) {
+	val isLoggedIn = viewModel.isLoggedIn.collectAsState()
 	val coroutineScope = rememberCoroutineScope()
 
 	val account = Auth0.getInstance(
@@ -73,7 +81,7 @@ fun Content(context: Context, modifier: Modifier = Modifier, snackbarHostState: 
 			}
 
 			override fun onSuccess(result: Credentials) {
-				isLoggedIn.value = true
+				viewModel.setIsLoggedIn(true)
 			}
 		}
 		WebAuthProvider
@@ -92,7 +100,7 @@ fun Content(context: Context, modifier: Modifier = Modifier, snackbarHostState: 
 			}
 
 			override fun onSuccess(result: Void?) {
-				isLoggedIn.value = false
+				viewModel.setIsLoggedIn(false)
 			}
 		}
 		WebAuthProvider
