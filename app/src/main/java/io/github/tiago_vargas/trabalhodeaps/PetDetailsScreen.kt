@@ -107,7 +107,7 @@ fun PropertyRow(key: String, value: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PetDetailsScreenPreview() {
-	val pet = Pet("Cashew", Species.Cat)
+	val pet = Pet(name = "Cashew", species = Species.Cat)
 
 	TrabalhoDeApsTheme {
 		PetDetailsScreen(pet = pet)
