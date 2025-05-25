@@ -39,15 +39,15 @@ fun PetListScreen(modifier: Modifier = Modifier) {
 		},
 	) { innerPadding ->
 		val pets = listOf(
-			Pet("Cajú", Species.Cat),
-			Pet("Branquinho", Species.Cat),
-			Pet("Salomão", Species.Cat),
-			Pet("Pretinho", Species.Cat),
-			Pet("Jeremias", Species.Cat),
-			Pet("Pingo", Species.Cat),
-			Pet("Jiló", Species.Cat),
-			Pet("Pitoquinho", Species.Cat),
-			Pet("Caramelo", Species.Cat),
+			Pet(name = "Cajú", species = Species.Cat),
+			Pet(name = "Branquinho", species = Species.Cat),
+			Pet(name = "Salomão", species = Species.Cat),
+			Pet(name = "Pretinho", species = Species.Cat),
+			Pet(name = "Jeremias", species = Species.Cat),
+			Pet(name = "Pingo", species = Species.Cat),
+			Pet(name = "Jiló", species = Species.Cat),
+			Pet(name = "Pitoquinho", species = Species.Cat),
+			Pet(name = "Caramelo", species = Species.Cat),
 		)
 //		TODO! Make this a Lazy Column to remember rows after scrolling them out of view
 		Column(modifier = Modifier.padding(innerPadding)) {
