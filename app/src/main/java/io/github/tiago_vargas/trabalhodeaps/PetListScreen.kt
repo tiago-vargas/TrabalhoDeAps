@@ -47,7 +47,7 @@ fun PrePetListScreen(
 			)
 		}
 		composable(route = "${AppScreen.PetDetails.name}/{petId}") { navBackStackEntry ->
-			val petId = navBackStackEntry.arguments?.getInt("petId")
+			val petId = navBackStackEntry.arguments?.getString("petId")?.toInt()
 			val pet = Pet(name = "", species = Species.Cat).fromId(petId ?: 0)
 			PetDetailsScreen(pet)
 		}
@@ -81,15 +81,15 @@ fun PetListScreen(
 		},
 	) { innerPadding ->
 		val pets = listOf(
-			Pet(name = "Cajú", species = Species.Cat),
-			Pet(name = "Branquinho", species = Species.Cat),
-			Pet(name = "Salomão", species = Species.Cat),
-			Pet(name = "Pretinho", species = Species.Cat),
-			Pet(name = "Jeremias", species = Species.Cat),
-			Pet(name = "Pingo", species = Species.Cat),
-			Pet(name = "Jiló", species = Species.Cat),
-			Pet(name = "Pitoquinho", species = Species.Cat),
-			Pet(name = "Caramelo", species = Species.Cat),
+			Pet(id = 0, name = "Cajú", species = Species.Cat),
+			Pet(id = 1, name = "Branquinho", species = Species.Cat),
+			Pet(id = 2, name = "Salomão", species = Species.Cat),
+			Pet(id = 3, name = "Pretinho", species = Species.Cat),
+			Pet(id = 4, name = "Jeremias", species = Species.Cat),
+			Pet(id = 5, name = "Pingo", species = Species.Cat),
+			Pet(id = 6, name = "Jiló", species = Species.Cat),
+			Pet(id = 7, name = "Pitoquinho", species = Species.Cat),
+			Pet(id = 8, name = "Caramelo", species = Species.Cat),
 		)
 //		TODO! Make this a Lazy Column to remember rows after scrolling them out of view
 		Column(modifier = Modifier.padding(innerPadding)) {
@@ -98,7 +98,6 @@ fun PetListScreen(
 					pet = pet,
 					modifier = Modifier
 						.clickable(onClick = { onPetClicked(pet) })
-//						.clickable(onClick = {})
 						.padding(12.dp)
 						.fillMaxWidth(),
 				)

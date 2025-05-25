@@ -9,9 +9,7 @@ data class Pet(
 	val gender: String? = null,
 	val wasSterilized: Boolean? = null,
 ) {
-	fun fromId(id: Int): Pet {
-		return pets[id]
-	}
+	fun fromId(id: Int): Pet = pets[id]
 }
 
 enum class Species {
