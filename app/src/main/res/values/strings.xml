@@ -2,4 +2,6 @@
 	<string name="app_name">TrabalhoDeAps</string>
 	<string name="an_error_occurred">An error occurred</string>
 	<string name="add_pet">Add Pet</string>
+	<string name="pet_details">Pet Details</string>
+	<string name="edit_pet">Edit Pet</string>
 </resources>
