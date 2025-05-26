@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,7 +48,7 @@ import java.util.Locale
 fun AddPetScreen(modifier: Modifier = Modifier) {
 	val petName = remember { mutableStateOf("") }
 	val petSpecies = remember { mutableStateOf(Species.Cat) }
-	val petBirthDate = remember { mutableStateOf("") }
+	val petBirthDate = remember { mutableLongStateOf(0L) }
 	val petWeight = remember { mutableDoubleStateOf(0.0) }
 	val petGender = remember { mutableStateOf(Gender.Male) }
 	val petIsSterilized = remember { mutableStateOf(false) }
@@ -145,8 +146,7 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 								datePickerState
 									.selectedDateMillis?.let { millis ->
 										selectedDate.value = millis.toString()
-										val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-										petBirthDate.value = sdf.format(Date(millis))
+										petBirthDate.longValue = millis
 									}
 								showDatePickerDialog.value = false
 							}
@@ -164,7 +164,10 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 				}
 			}
 			OutlinedTextField(
-				petBirthDate.value.toString(),
+				value = {
+					val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+					sdf.format(Date(petBirthDate.longValue))
+				}(),
 				readOnly = true,
 				onValueChange = { s -> },
 				label = { Text("Birth Date") },  // TODO! Extract
