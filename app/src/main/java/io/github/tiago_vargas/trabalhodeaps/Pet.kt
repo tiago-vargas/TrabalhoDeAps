@@ -24,9 +24,7 @@ data class Pet(
 	val weight: Double = 0.0,
 	val gender: Gender = Gender.Male,
 	val wasSterilized: Boolean = false,
-) {
-	fun fromId(id: Int): Pet = pets[id]  // FIXME: This is only temporary!
-}
+)
 
 enum class Species {
 	Cat,
@@ -36,18 +34,6 @@ enum class Gender {
 	Male,
 	Female,
 }
-
-private val pets = listOf(
-	Pet(id = 0, name = "Cajú", species = Species.Cat),
-	Pet(id = 1, name = "Branquinho", species = Species.Cat),
-	Pet(id = 2, name = "Salomão", species = Species.Cat),
-	Pet(id = 3, name = "Pretinho", species = Species.Cat),
-	Pet(id = 4, name = "Jeremias", species = Species.Cat),
-	Pet(id = 5, name = "Pingo", species = Species.Cat),
-	Pet(id = 6, name = "Jiló", species = Species.Cat),
-	Pet(id = 7, name = "Pitoquinho", species = Species.Cat),
-	Pet(id = 8, name = "Caramelo", species = Species.Cat),
-)
 
 @Dao
 interface PetDao {
