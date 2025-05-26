@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
@@ -83,10 +85,12 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 			)
 		}
 	) { innerPadding ->
+		val scrollState = rememberScrollState()
 		Column(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(innerPadding),
+				.padding(innerPadding)
+				.verticalScroll(scrollState),
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.spacedBy(8.dp),
 		) {
