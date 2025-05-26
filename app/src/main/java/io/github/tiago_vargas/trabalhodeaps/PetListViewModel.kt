@@ -8,6 +8,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
 class PetListViewModel(val petDao: PetDao) : ViewModel() {
+	val cachedPets = petDao.getAll()
+
 	companion object {
 		val Factory: ViewModelProvider.Factory = viewModelFactory {
 			initializer {

@@ -55,11 +55,20 @@ fun PrePetListScreen(
 		}
 		composable(route = "${AppScreen.PetDetails.name}/{petId}") { navBackStackEntry ->
 			val petId = navBackStackEntry.arguments?.getString("petId")?.toInt()
-			val pet = Pet(name = "", species = Species.Cat).fromId(petId ?: 0)
-			PetDetailsScreen(
-				pet = pet,
-				onNavigateUp = { navController.navigateUp() },
-			)
+			val pet = viewModel
+				.cachedPets
+				.collectAsState(initial = emptyList())
+				.value
+				.find { it.id == petId }
+			if (pet == null) {
+				// This prevents the app from crashing
+				Text("Loading…")
+			} else {
+				PetDetailsScreen(
+					pet = pet,
+					onNavigateUp = { navController.navigateUp() },
+				)
+			}
 		}
 		composable(route = AppScreen.AddPet.name) {
 			AddPetScreen(
@@ -67,6 +76,7 @@ fun PrePetListScreen(
 					coroutineScope.launch {
 						viewModel.petDao.insert(pet)
 					}
+					navController.navigateUp()
 				},
 			)
 		}
@@ -97,7 +107,7 @@ fun PetListScreen(
 			)
 		},
 	) { innerPadding ->
-		val pets = viewModel.petDao.getAll().collectAsState(initial = emptyList()).value
+		val pets = viewModel.cachedPets.collectAsState(initial = emptyList()).value
 //		TODO! Make this a Lazy Column to remember rows after scrolling them out of view
 		Column(modifier = Modifier.padding(innerPadding)) {
 			for (pet in pets) {
