@@ -47,20 +47,17 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 //fun AddPetScreen(onCancelClicked: () -> Unit, modifier: Modifier = Modifier) {
-fun AddPetScreen(modifier: Modifier = Modifier) {
+fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 	val petName = remember { mutableStateOf("") }
 	val petSpecies = remember { mutableStateOf(Species.Cat) }
 	val petBirthDate = remember { mutableLongStateOf(0L) }
 	val petWeight = remember { mutableDoubleStateOf(0.0) }
 	val petGender = remember { mutableStateOf(Gender.Male) }
 	val petIsSterilized = remember { mutableStateOf(false) }
-//	val pet = remember { mutableStateOf(Pet(name = "", species = Species.Cat)) }
 
-	Scaffold(
-		modifier = modifier.fillMaxSize(),
-		topBar = {
-			TopAppBar(
-				title = { Text(stringResource(R.string.add_pet)) },
+	Scaffold(modifier = modifier.fillMaxSize(), topBar = {
+		TopAppBar(
+			title = { Text(stringResource(R.string.add_pet)) },
 //				navigationIcon = {
 //					IconButton(onClick = { /* TODO! onNavigateUp */ }) {
 //						Icon(
@@ -69,22 +66,32 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 //						)
 //					}
 //				},
-			)
-		},
-		bottomBar = {
-			BottomAppBar(
-				actions = {
-					Button(onClick = { /* TODO! */ }) {
-						Text("Cancel")
-					}
-					Spacer(Modifier.weight(1f))
-					Button(onClick = { /* TODO! */ }) {
-						Text("Done")
-					}
-				},
-			)
-		}
-	) { innerPadding ->
+		)
+	}, bottomBar = {
+		BottomAppBar(
+			actions = {
+				Button(onClick = { /* TODO! */ }) {
+					Text("Cancel")
+				}
+				Spacer(Modifier.weight(1f))
+				Button(
+					onClick = {
+						val pet = Pet(
+							name = petName.value,
+							species = petSpecies.value,
+							birthDate = petBirthDate.longValue,
+							weight = petWeight.doubleValue.toDouble(),
+							gender = petGender.value,
+							wasSterilized = petIsSterilized.value,
+						)
+						onDoneClicked(pet)
+					},
+				) {
+					Text("Done")
+				}
+			},
+		)
+	}) { innerPadding ->
 		val scrollState = rememberScrollState()
 		Column(
 			modifier = Modifier
@@ -102,7 +109,7 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 
 			OutlinedTextField(
 				petName.value,
-				onValueChange = { s -> petName.value = s},
+				onValueChange = { s -> petName.value = s },
 				label = { Text("Name") },  // TODO! Extract
 			)
 
@@ -120,11 +127,10 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 								contentDescription = "Pick Species",  // TODO! Extract
 							)
 						}
-					}
-				)
+					})
 				DropdownMenu(
 					expanded = speciesDropdownMenuIsExpanded.value,
-					onDismissRequest = { speciesDropdownMenuIsExpanded.value = false }
+					onDismissRequest = { speciesDropdownMenuIsExpanded.value = false },
 				) {
 					for (species in Species.entries) {
 						DropdownMenuItem(
@@ -147,13 +153,12 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 					confirmButton = {
 						Button(
 							onClick = {
-								datePickerState
-									.selectedDateMillis?.let { millis ->
+								datePickerState.selectedDateMillis?.let { millis ->
 										selectedDate.value = millis.toString()
 										petBirthDate.longValue = millis
 									}
 								showDatePickerDialog.value = false
-							}
+							},
 						) {
 							Text(text = "Ok")  // TODO! Extract
 						}
@@ -203,7 +208,7 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 				)
 				DropdownMenu(
 					expanded = genderDropdownMenuIsExpanded.value,
-					onDismissRequest = { genderDropdownMenuIsExpanded.value = false }
+					onDismissRequest = { genderDropdownMenuIsExpanded.value = false },
 				) {
 					for (gender in Gender.entries) {
 						DropdownMenuItem(
@@ -219,7 +224,7 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 
 			OutlinedTextField(
 				petWeight.doubleValue.toString(),
-				onValueChange = { s -> petWeight.doubleValue = s.toDouble()},
+				onValueChange = { s -> petWeight.doubleValue = s.toDouble() },
 				label = { Text("Weight") },  // TODO! Extract
 				suffix = { Text("kg") },
 			)
@@ -242,7 +247,7 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 				)
 				DropdownMenu(
 					expanded = isSterilizedDropdownMenuIsExpanded.value,
-					onDismissRequest = { isSterilizedDropdownMenuIsExpanded.value = false }
+					onDismissRequest = { isSterilizedDropdownMenuIsExpanded.value = false },
 				) {
 					for (option in listOf(true, false)) {
 						DropdownMenuItem(
@@ -263,6 +268,6 @@ fun AddPetScreen(modifier: Modifier = Modifier) {
 @Composable
 fun AddPetScreenPreview() {
 	TrabalhoDeApsTheme {
-		AddPetScreen()
+		AddPetScreen(onDoneClicked = { pet -> })
 	}
 }

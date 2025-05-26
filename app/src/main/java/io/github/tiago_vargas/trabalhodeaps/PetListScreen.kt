@@ -15,15 +15,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +35,9 @@ fun PrePetListScreen(
 	modifier: Modifier = Modifier,
 	navController: NavHostController = rememberNavController(),
 ) {
+	val coroutineScope = rememberCoroutineScope()
+	val viewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
+
 	NavHost(
 		navController = navController,
 		startDestination = AppScreen.PetList.name,
@@ -43,7 +50,7 @@ fun PrePetListScreen(
 				},
 				onAddClicked = {
 					navController.navigate(route = AppScreen.AddPet.name)
-				}
+				},
 			)
 		}
 		composable(route = "${AppScreen.PetDetails.name}/{petId}") { navBackStackEntry ->
@@ -55,7 +62,13 @@ fun PrePetListScreen(
 			)
 		}
 		composable(route = AppScreen.AddPet.name) {
-			AddPetScreen()
+			AddPetScreen(
+				onDoneClicked = { pet ->
+					coroutineScope.launch {
+						viewModel.petDao.insert(pet)
+					}
+				},
+			)
 		}
 	}
 }
@@ -66,6 +79,7 @@ fun PetListScreen(
 	onPetClicked: (Pet) -> Unit,
 	onAddClicked: () -> Unit,
 	modifier: Modifier = Modifier,
+	viewModel: PetListViewModel = viewModel(factory = PetListViewModel.Factory),
 ) {
 	Scaffold(
 		modifier = modifier,
@@ -83,17 +97,7 @@ fun PetListScreen(
 			)
 		},
 	) { innerPadding ->
-		val pets = listOf(
-			Pet(id = 0, name = "Cajú", species = Species.Cat),
-			Pet(id = 1, name = "Branquinho", species = Species.Cat),
-			Pet(id = 2, name = "Salomão", species = Species.Cat),
-			Pet(id = 3, name = "Pretinho", species = Species.Cat),
-			Pet(id = 4, name = "Jeremias", species = Species.Cat),
-			Pet(id = 5, name = "Pingo", species = Species.Cat),
-			Pet(id = 6, name = "Jiló", species = Species.Cat),
-			Pet(id = 7, name = "Pitoquinho", species = Species.Cat),
-			Pet(id = 8, name = "Caramelo", species = Species.Cat),
-		)
+		val pets = viewModel.petDao.getAll().collectAsState(initial = emptyList()).value
 //		TODO! Make this a Lazy Column to remember rows after scrolling them out of view
 		Column(modifier = Modifier.padding(innerPadding)) {
 			for (pet in pets) {
