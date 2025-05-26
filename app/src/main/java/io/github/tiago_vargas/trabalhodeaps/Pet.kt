@@ -16,6 +16,11 @@ enum class Species {
 	Cat,
 }
 
+enum class Gender {
+	Male,
+	Female,
+}
+
 private val pets = listOf(
 	Pet(id = 0, name = "Cajú", species = Species.Cat),
 	Pet(id = 1, name = "Branquinho", species = Species.Cat),
