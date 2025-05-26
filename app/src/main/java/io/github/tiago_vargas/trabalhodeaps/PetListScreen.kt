@@ -49,7 +49,10 @@ fun PrePetListScreen(
 		composable(route = "${AppScreen.PetDetails.name}/{petId}") { navBackStackEntry ->
 			val petId = navBackStackEntry.arguments?.getString("petId")?.toInt()
 			val pet = Pet(name = "", species = Species.Cat).fromId(petId ?: 0)
-			PetDetailsScreen(pet)
+			PetDetailsScreen(
+				pet = pet,
+				onNavigateUp = { navController.navigateUp() },
+			)
 		}
 		composable(route = AppScreen.AddPet.name) {
 			AddPetScreen()
