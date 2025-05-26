@@ -11,8 +11,8 @@ composeBom = "2024.09.00"
 auth0 = "+"
 lifecycle = "2.9.0"
 navigationCompose = "2.9.0"
-room = "2.7.0"
-ksp = "2.1.0-1.0.29"
+room = "2.7.1"
+ksp = "2.0.21-1.0.27"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
