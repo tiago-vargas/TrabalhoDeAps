@@ -29,7 +29,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetDetailsScreen(pet: Pet, onNavigateUp: () -> Unit, modifier: Modifier = Modifier) {
+fun PetDetailsScreen(pet: Pet, onEditClicked: () -> Unit, onNavigateUp: () -> Unit, modifier: Modifier = Modifier) {
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
 		topBar = {
@@ -44,7 +44,7 @@ fun PetDetailsScreen(pet: Pet, onNavigateUp: () -> Unit, modifier: Modifier = Mo
 					}
 				},
 				actions = {
-					IconButton(onClick = { /* TODO! */ }) {
+					IconButton(onClick = onEditClicked) {
 						Icon(
 							imageVector = Icons.Filled.Edit,
 							contentDescription = stringResource(R.string.edit_pet),
@@ -119,6 +119,6 @@ fun PetDetailsScreenPreview() {
 	val pet = Pet(name = "Cashew", species = Species.Cat)
 
 	TrabalhoDeApsTheme {
-		PetDetailsScreen(pet = pet, onNavigateUp = {})
+		PetDetailsScreen(pet = pet, onEditClicked = {}, onNavigateUp = {})
 	}
 }

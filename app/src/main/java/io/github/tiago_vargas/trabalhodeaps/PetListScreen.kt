@@ -29,7 +29,6 @@ import androidx.navigation.compose.rememberNavController
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrePetListScreen(
 	modifier: Modifier = Modifier,
@@ -66,6 +65,7 @@ fun PrePetListScreen(
 			} else {
 				PetDetailsScreen(
 					pet = pet,
+					onEditClicked = { navController.navigate(route = "${AppScreen.EditPet.name}/${pet.id}") },
 					onNavigateUp = { navController.navigateUp() },
 				)
 			}
@@ -79,6 +79,28 @@ fun PrePetListScreen(
 					navController.navigateUp()
 				},
 			)
+		}
+		composable(route = "${AppScreen.EditPet.name}/{petId}") { navBackStackEntry ->
+			val petId = navBackStackEntry.arguments?.getString("petId")?.toInt()
+			val pet = viewModel
+				.cachedPets
+				.collectAsState(initial = emptyList())
+				.value
+				.find { it.id == petId }
+			if (pet == null) {
+				// This prevents the app from crashing
+				Text("Loading…")
+			} else {
+				EditPetScreen(
+					pet = pet,
+					onDoneClicked = { pet ->
+						coroutineScope.launch {
+							viewModel.petDao.update(pet)
+							navController.navigateUp()
+						}
+					},
+				)
+			}
 		}
 	}
 }
@@ -127,6 +149,7 @@ private enum class AppScreen(@StringRes val title: Int) {
 	PetList(title = R.string.pet_list),
 	PetDetails(title = R.string.pet_details),
 	AddPet(title = R.string.add_pet),
+	EditPet(title = R.string.edit_pet),
 }
 
 @Composable
