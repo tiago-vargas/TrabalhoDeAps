@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,12 +29,20 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetDetailsScreen(pet: Pet, modifier: Modifier = Modifier) {
+fun PetDetailsScreen(pet: Pet, onNavigateUp: () -> Unit, modifier: Modifier = Modifier) {
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
 		topBar = {
 			TopAppBar(
 				title = { Text(stringResource(R.string.pet_details)) },
+				navigationIcon = {
+					IconButton(onClick = onNavigateUp) {
+						Icon(
+							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+							contentDescription = null,
+						)
+					}
+				},
 				actions = {
 					IconButton(onClick = { /* TODO! */ }) {
 						Icon(
@@ -110,6 +119,6 @@ fun PetDetailsScreenPreview() {
 	val pet = Pet(name = "Cashew", species = Species.Cat)
 
 	TrabalhoDeApsTheme {
-		PetDetailsScreen(pet = pet)
+		PetDetailsScreen(pet = pet, onNavigateUp = {})
 	}
 }
