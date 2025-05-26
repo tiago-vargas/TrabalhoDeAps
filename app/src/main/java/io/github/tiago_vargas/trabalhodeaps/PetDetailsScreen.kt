@@ -64,18 +64,18 @@ fun PetDetailsScreen(pet: Pet, onNavigateUp: () -> Unit, modifier: Modifier = Mo
 				PropertyRow("Species", pet.species.toString(), modifier = Modifier.fillMaxWidth())
 				PropertyRow(
 					"Birth Date",
-					(pet.birthDate ?: 0L).toString(),
+					pet.birthDate.toString(),
 					modifier = Modifier.fillMaxWidth()
 				)
 				PropertyRow(
 					"Weight",
-					pet.weight?.toString() ?: "Unknown",
+					pet.weight.toString(),
 					modifier = Modifier.fillMaxWidth()
 				)
-				PropertyRow("Gender", pet.gender ?: "Unknown", modifier = Modifier.fillMaxWidth())
+				PropertyRow("Gender", pet.gender.toString(), modifier = Modifier.fillMaxWidth())
 				PropertyRow(
 					"Was Sterilized",
-					pet.wasSterilized?.toString() ?: "Unknown",
+					pet.wasSterilized.toString(),
 					modifier = Modifier.fillMaxWidth()
 				)
 			}
