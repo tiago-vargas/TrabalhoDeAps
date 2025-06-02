@@ -91,9 +91,6 @@ fun Content(
 	}
 
 	if (isLoggedIn.value) {
-//		PetListScreen(onPetClicked = { pet -> }, onAddClicked = {}, modifier = modifier)
-//		LogoutScreen(onLogoutClicked = attemptLogout, modifier = modifier)
-//		PetListScreen(onPetClicked = { pet -> }, onAddClicked = {}, modifier = modifier)
 		PrePetListScreen(modifier = modifier)
 	} else {
 		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +33,7 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 	val petWeight = remember { mutableDoubleStateOf(0.0) }
 	val petGender = remember { mutableStateOf(Gender.Male) }
 	val petIsSterilized = remember { mutableStateOf(false) }
+	val scrollState = rememberScrollState()
 
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
@@ -88,6 +91,7 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 			onPetIsSterilizedChange = { isSterilized -> petIsSterilized.value = isSterilized },
 			modifier = modifier
 				.fillMaxWidth()
+				.verticalScroll(scrollState)
 				.padding(innerPadding),
 		)
 	}

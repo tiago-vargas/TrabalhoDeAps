@@ -99,6 +99,12 @@ fun PrePetListScreen(
 							navController.navigateUp()
 						}
 					},
+					onDeleteClicked = { pet ->
+						coroutineScope.launch {
+							viewModel.petDao.delete(pet)
+							navController.navigate(route = AppScreen.PetList.name)
+						}
+					},
 				)
 			}
 		}

@@ -50,9 +50,8 @@ fun PetForm(
 	onPetIsSterilizedChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	val scrollState = rememberScrollState()
 	Column(
-		modifier = modifier.verticalScroll(scrollState),
+		modifier = modifier,
 		horizontalAlignment = Alignment.Companion.CenterHorizontally,
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 	) {
