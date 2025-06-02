@@ -63,39 +63,39 @@ fun Content(
 	modifier: Modifier = Modifier,
 	snackbarHostState: SnackbarHostState,
 ) {
-	val isLoggedIn = viewModel.isLoggedIn.collectAsState()
-	val coroutineScope = rememberCoroutineScope()
+//	val isLoggedIn = viewModel.isLoggedIn.collectAsState()
+//	val coroutineScope = rememberCoroutineScope()
+//
+//	val account = Auth0.getInstance(
+//		clientId = context.getString(R.string.com_auth0_client_id),
+//		domain = context.getString(R.string.com_auth0_domain),
+//	)
+//	val attemptLogin = {
+//		val callback = object : Callback<Credentials, AuthenticationException> {
+//			override fun onFailure(error: AuthenticationException) {
+//				coroutineScope.launch {
+//					snackbarHostState.showSnackbar(
+//						message = context.getString(R.string.an_error_occurred),
+//					)
+//				}
+//			}
+//
+//			override fun onSuccess(result: Credentials) {
+//				viewModel.setIsLoggedIn(true)
+//			}
+//		}
+//		WebAuthProvider
+//			.login(account)
+//			.withScheme(context.getString(R.string.com_auth0_scheme))
+//			.start(context, callback)
+//	}
 
-	val account = Auth0.getInstance(
-		clientId = context.getString(R.string.com_auth0_client_id),
-		domain = context.getString(R.string.com_auth0_domain),
-	)
-	val attemptLogin = {
-		val callback = object : Callback<Credentials, AuthenticationException> {
-			override fun onFailure(error: AuthenticationException) {
-				coroutineScope.launch {
-					snackbarHostState.showSnackbar(
-						message = context.getString(R.string.an_error_occurred),
-					)
-				}
-			}
-
-			override fun onSuccess(result: Credentials) {
-				viewModel.setIsLoggedIn(true)
-			}
-		}
-		WebAuthProvider
-			.login(account)
-			.withScheme(context.getString(R.string.com_auth0_scheme))
-			.start(context, callback)
-	}
-
-	if (isLoggedIn.value) {
+//	if (isLoggedIn.value) {
 //		PetListScreen(onPetClicked = { pet -> }, onAddClicked = {}, modifier = modifier)
 //		LogoutScreen(onLogoutClicked = attemptLogout, modifier = modifier)
 //		PetListScreen(onPetClicked = { pet -> }, onAddClicked = {}, modifier = modifier)
 		PrePetListScreen(modifier = modifier)
-	} else {
-		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
-	}
+//	} else {
+//		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
+//	}
 }

@@ -1,9 +1,12 @@
 package io.github.tiago_vargas.trabalhodeaps
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +25,12 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditPetScreen(pet: Pet, onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
+fun EditPetScreen(
+	pet: Pet,
+	onDoneClicked: (Pet) -> Unit,
+	onDeleteClicked: (Pet) -> Unit,
+	modifier: Modifier = Modifier,
+) {
 	val sandboxPet = pet.copy()
 	val petName = remember { mutableStateOf(sandboxPet.name) }
 	val petSpecies = remember { mutableStateOf(sandboxPet.species) }
@@ -30,6 +38,7 @@ fun EditPetScreen(pet: Pet, onDoneClicked: (Pet) -> Unit, modifier: Modifier = M
 	val petWeight = remember { mutableDoubleStateOf(sandboxPet.weight) }
 	val petGender = remember { mutableStateOf(sandboxPet.gender) }
 	val petIsSterilized = remember { mutableStateOf(sandboxPet.wasSterilized) }
+	val scrollState = rememberScrollState()
 
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
@@ -73,23 +82,33 @@ fun EditPetScreen(pet: Pet, onDoneClicked: (Pet) -> Unit, modifier: Modifier = M
 			)
 		},
 	) { innerPadding ->
-		PetForm(
-			petName = petName.value,
-			onPetNameChange = { s -> petName.value = s },
-			petSpecies = petSpecies.value,
-			onPetSpeciesChange = { species -> petSpecies.value = species },
-			petBirthDate = petBirthDate.longValue,
-			onPetBirthDateChange = { millis -> petBirthDate.longValue = millis },
-			petWeight = petWeight.doubleValue,
-			onPetWeightChange = { weight -> petWeight.doubleValue = weight },
-			petGender = petGender.value,
-			onPetGenderChange = { gender -> petGender.value = gender },
-			petIsSterilized = petIsSterilized.value,
-			onPetIsSterilizedChange = { isSterilized -> petIsSterilized.value = isSterilized },
+		Column(
 			modifier = modifier
 				.fillMaxWidth()
+				.verticalScroll(scrollState)
 				.padding(innerPadding),
-		)
+		) {
+			PetForm(
+				petName = petName.value,
+				onPetNameChange = { s -> petName.value = s },
+				petSpecies = petSpecies.value,
+				onPetSpeciesChange = { species -> petSpecies.value = species },
+				petBirthDate = petBirthDate.longValue,
+				onPetBirthDateChange = { millis -> petBirthDate.longValue = millis },
+				petWeight = petWeight.doubleValue,
+				onPetWeightChange = { weight -> petWeight.doubleValue = weight },
+				petGender = petGender.value,
+				onPetGenderChange = { gender -> petGender.value = gender },
+				petIsSterilized = petIsSterilized.value,
+				onPetIsSterilizedChange = { isSterilized -> petIsSterilized.value = isSterilized },
+				modifier = modifier
+					.fillMaxWidth()
+					.padding(innerPadding),
+			)
+			Button(onClick = { onDeleteClicked(pet) }) {
+				Text("Delete")  // TODO! Extract
+			}
+		}
 	}
 }
 
@@ -105,6 +124,6 @@ fun EditPetScreenPreview() {
 		wasSterilized = false,
 	)
 	TrabalhoDeApsTheme {
-		EditPetScreen(pet, onDoneClicked = { pet -> })
+		EditPetScreen(pet, onDoneClicked = { pet -> }, onDeleteClicked = { pet -> })
 	}
 }
