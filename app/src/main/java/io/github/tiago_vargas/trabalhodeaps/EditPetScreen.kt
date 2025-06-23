@@ -1,0 +1,129 @@
+package io.github.tiago_vargas.trabalhodeaps
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditPetScreen(
+	pet: Pet,
+	onDoneClicked: (Pet) -> Unit,
+	onDeleteClicked: (Pet) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val sandboxPet = pet.copy()
+	val petName = remember { mutableStateOf(sandboxPet.name) }
+	val petSpecies = remember { mutableStateOf(sandboxPet.species) }
+	val petBirthDate = remember { mutableLongStateOf(sandboxPet.birthDate) }
+	val petWeight = remember { mutableDoubleStateOf(sandboxPet.weight) }
+	val petGender = remember { mutableStateOf(sandboxPet.gender) }
+	val petIsSterilized = remember { mutableStateOf(sandboxPet.wasSterilized) }
+	val scrollState = rememberScrollState()
+
+	Scaffold(
+		modifier = modifier.fillMaxSize(),
+		topBar = {
+			TopAppBar(
+				title = { Text(stringResource(R.string.edit_pet)) },
+//				navigationIcon = {
+//					IconButton(onClick = { /* TODO! onNavigateUp */ }) {
+//						Icon(
+//							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//							contentDescription = null,
+//						)
+//					}
+//				},
+			)
+		},
+		bottomBar = {
+			BottomAppBar(
+				actions = {
+					Button(onClick = { /* TODO! */ }) {
+						Text("Cancel")
+					}
+					Spacer(Modifier.weight(1f))
+					Button(
+						onClick = {
+							val pet = Pet(
+								id = pet.id,
+								name = petName.value,
+								species = petSpecies.value,
+								birthDate = petBirthDate.longValue,
+								weight = petWeight.doubleValue.toDouble(),
+								gender = petGender.value,
+								wasSterilized = petIsSterilized.value,
+							)
+							onDoneClicked(pet)
+						},
+					) {
+						Text("Done")
+					}
+				},
+			)
+		},
+	) { innerPadding ->
+		Column(
+			modifier = modifier
+				.fillMaxWidth()
+				.verticalScroll(scrollState)
+				.padding(innerPadding),
+		) {
+			PetForm(
+				petName = petName.value,
+				onPetNameChange = { s -> petName.value = s },
+				petSpecies = petSpecies.value,
+				onPetSpeciesChange = { species -> petSpecies.value = species },
+				petBirthDate = petBirthDate.longValue,
+				onPetBirthDateChange = { millis -> petBirthDate.longValue = millis },
+				petWeight = petWeight.doubleValue,
+				onPetWeightChange = { weight -> petWeight.doubleValue = weight },
+				petGender = petGender.value,
+				onPetGenderChange = { gender -> petGender.value = gender },
+				petIsSterilized = petIsSterilized.value,
+				onPetIsSterilizedChange = { isSterilized -> petIsSterilized.value = isSterilized },
+				modifier = modifier
+					.fillMaxWidth()
+					.padding(innerPadding),
+			)
+			Button(onClick = { onDeleteClicked(pet) }) {
+				Text("Delete")  // TODO! Extract
+			}
+		}
+	}
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun EditPetScreenPreview() {
+	val pet = Pet(
+		name = "Cashew",
+		species = Species.Cat,
+		birthDate = 1_700_000_000_000L,
+		weight = 4.5,
+		gender = Gender.Male,
+		wasSterilized = false,
+	)
+	TrabalhoDeApsTheme {
+		EditPetScreen(pet, onDoneClicked = { pet -> }, onDeleteClicked = { pet -> })
+	}
+}

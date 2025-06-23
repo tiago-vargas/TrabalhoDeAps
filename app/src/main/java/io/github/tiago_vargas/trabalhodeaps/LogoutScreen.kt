@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @Composable
-fun MainScreen(onLogoutClicked: () -> Unit, modifier: Modifier = Modifier) {
+fun LogoutScreen(onLogoutClicked: () -> Unit, modifier: Modifier = Modifier) {
 	Column(
 		modifier = modifier,
 		verticalArrangement = Arrangement.Center,
@@ -32,7 +32,7 @@ fun MainScreen(onLogoutClicked: () -> Unit, modifier: Modifier = Modifier) {
 fun MainScreenPreview() {
 	TrabalhoDeApsTheme {
 		Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-			MainScreen(
+			LogoutScreen(
 				onLogoutClicked = {},
 				modifier = Modifier
 					.fillMaxSize()
