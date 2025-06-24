@@ -30,12 +30,7 @@ fun LoginScreen(
 	modifier: Modifier = Modifier,
 ) {
 	val coroutineScope = rememberCoroutineScope()
-	val account = {
-		Auth0.getInstance(
-			clientId = context.getString(R.string.com_auth0_client_id),
-			domain = context.getString(R.string.com_auth0_domain),
-		)
-	}()
+	val account = getAuth0Instance(context)
 	val attemptLogin = {
 		val callback = object : Callback<Credentials, AuthenticationException> {
 			override fun onFailure(error: AuthenticationException) {
@@ -66,6 +61,11 @@ fun LoginScreen(
 		}
 	}
 }
+
+private fun getAuth0Instance(context: Context): Auth0 = Auth0.getInstance(
+	context.getString(R.string.com_auth0_client_id),
+	context.getString(R.string.com_auth0_domain),
+)
 
 //@Preview(showBackground = true, showSystemUi = true)
 //@Composable
