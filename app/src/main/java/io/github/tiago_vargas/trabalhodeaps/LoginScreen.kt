@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.callback.Callback
@@ -26,8 +27,8 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
 	context: Context,
 	snackbarHostState: SnackbarHostState,
-	viewModel: LoginViewModel,
 	modifier: Modifier = Modifier,
+	viewModel: LoginViewModel = viewModel(),
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	val account = getAuth0Instance(context)
@@ -51,33 +52,38 @@ fun LoginScreen(
 			.start(context, callback)
 	}
 
+	LoginScreenContent(onLoginClicked = attemptLogin, modifier = modifier)
+}
+
+private fun getAuth0Instance(context: Context): Auth0 = Auth0.getInstance(
+	clientId = context.getString(R.string.com_auth0_client_id),
+	domain = context.getString(R.string.com_auth0_domain),
+)
+
+@Composable
+fun LoginScreenContent(onLoginClicked: () -> Unit, modifier: Modifier = Modifier) {
 	Column(
 		modifier = modifier,
 		verticalArrangement = Arrangement.Center,
 		horizontalAlignment = Alignment.CenterHorizontally,
 	) {
-		Button(onClick = attemptLogin) {
+		Button(onClick = onLoginClicked) {
 			Text("Login")
 		}
 	}
 }
 
-private fun getAuth0Instance(context: Context): Auth0 = Auth0.getInstance(
-	context.getString(R.string.com_auth0_client_id),
-	context.getString(R.string.com_auth0_domain),
-)
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun LoginScreenPreview() {
-//	TrabalhoDeApsTheme {
-//		Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//			LoginScreen(
-//
-//				modifier = Modifier
-//					.fillMaxSize()
-//					.padding(innerPadding),
-//			)
-//		}
-//	}
-//}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginScreenContentPreview() {
+	TrabalhoDeApsTheme {
+		Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+			LoginScreenContent(
+				onLoginClicked = {},
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(innerPadding),
+			)
+		}
+	}
+}
