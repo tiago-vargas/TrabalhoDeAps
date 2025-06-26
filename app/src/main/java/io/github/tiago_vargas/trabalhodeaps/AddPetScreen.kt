@@ -63,7 +63,7 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 								name = petName.value,
 								species = petSpecies.value,
 								birthDate = petBirthDate.longValue,
-								weight = petWeight.doubleValue.toDouble(),
+								weight = petWeight.doubleValue,
 								gender = petGender.value,
 								wasSterilized = petIsSterilized.value,
 							)
