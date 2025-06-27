@@ -73,9 +73,7 @@ fun PrePetListScreen(
 		composable(route = AppScreen.AddPet.name) {
 			AddPetScreen(
 				onDoneClicked = { pet ->
-					coroutineScope.launch {
-						viewModel.petDao.insert(pet)
-					}
+					coroutineScope.launch { viewModel.petDao.insert(pet) }
 					navController.navigateUp()
 				},
 			)

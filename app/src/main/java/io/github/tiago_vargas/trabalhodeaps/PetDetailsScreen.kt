@@ -29,7 +29,12 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetDetailsScreen(pet: Pet, onEditClicked: () -> Unit, onNavigateUp: () -> Unit, modifier: Modifier = Modifier) {
+fun PetDetailsScreen(
+	pet: Pet,
+	onEditClicked: () -> Unit,
+	onNavigateUp: () -> Unit,
+	modifier: Modifier = Modifier,
+) {
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
 		topBar = {
