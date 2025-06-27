@@ -109,7 +109,6 @@ fun PrePetListScreen(
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetListScreen(
 	onPetClicked: (Pet) -> Unit,
@@ -119,19 +118,7 @@ fun PetListScreen(
 ) {
 	Scaffold(
 		modifier = modifier,
-		topBar = {
-			TopAppBar(
-				title = { Text("Pets") },
-				actions = {
-					IconButton(onClick = onAddClicked) {
-						Icon(
-							imageVector = Icons.Filled.Add,
-							contentDescription = stringResource(R.string.add_pet),
-						)
-					}
-				},
-			)
-		},
+		topBar = { TopBar(onAddClicked = onAddClicked) },
 	) { innerPadding ->
 		val pets = viewModel.cachedPets.collectAsState(initial = emptyList()).value
 //		TODO! Make this a Lazy Column to remember rows after scrolling them out of view
@@ -147,6 +134,23 @@ fun PetListScreen(
 			}
 		}
 	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(onAddClicked: () -> Unit, modifier: Modifier = Modifier) {
+	TopAppBar(
+		title = { Text("Pets") },
+		modifier = modifier,
+		actions = {
+			IconButton(onClick = onAddClicked) {
+				Icon(
+					imageVector = Icons.Filled.Add,
+					contentDescription = stringResource(R.string.add_pet),
+				)
+			}
+		},
+	)
 }
 
 private enum class AppScreen(@StringRes val title: Int) {

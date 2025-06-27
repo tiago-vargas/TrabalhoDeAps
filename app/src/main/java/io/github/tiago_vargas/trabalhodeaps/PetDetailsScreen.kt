@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetDetailsScreen(
 	pet: Pet,
@@ -37,27 +36,7 @@ fun PetDetailsScreen(
 ) {
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
-		topBar = {
-			TopAppBar(
-				title = { Text(stringResource(R.string.pet_details)) },
-				navigationIcon = {
-					IconButton(onClick = onNavigateUp) {
-						Icon(
-							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-							contentDescription = null,
-						)
-					}
-				},
-				actions = {
-					IconButton(onClick = onEditClicked) {
-						Icon(
-							imageVector = Icons.Filled.Edit,
-							contentDescription = stringResource(R.string.edit_pet),
-						)
-					}
-				},
-			)
-		},
+		topBar = { TopBar(onEditClicked, onNavigateUp) },
 	) { innerPadding ->
 		Column(
 			modifier = Modifier.padding(innerPadding),
@@ -66,7 +45,11 @@ fun PetDetailsScreen(
 			Banner(pet.name)
 
 			Column(modifier = Modifier.padding(16.dp)) {
-				PropertyRow("Species", pet.species.toString(), modifier = Modifier.fillMaxWidth())
+				PropertyRow(
+					"Species",
+					pet.species.toString(),
+					modifier = Modifier.fillMaxWidth(),
+				)
 				PropertyRow(
 					"Birth Date",
 					pet.birthDate.toString(),
@@ -77,7 +60,11 @@ fun PetDetailsScreen(
 					pet.weight.toString(),
 					modifier = Modifier.fillMaxWidth()
 				)
-				PropertyRow("Gender", pet.gender.toString(), modifier = Modifier.fillMaxWidth())
+				PropertyRow(
+					"Gender",
+					pet.gender.toString(),
+					modifier = Modifier.fillMaxWidth(),
+				)
 				PropertyRow(
 					"Was Sterilized",
 					pet.wasSterilized.toString(),
@@ -86,6 +73,35 @@ fun PetDetailsScreen(
 			}
 		}
 	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(
+	onEditClicked: () -> Unit,
+	onNavigateUp: () -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	TopAppBar(
+		title = { Text(stringResource(R.string.pet_details)) },
+		modifier = modifier,
+		navigationIcon = {
+			IconButton(onClick = onNavigateUp) {
+				Icon(
+					imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+					contentDescription = null,
+				)
+			}
+		},
+		actions = {
+			IconButton(onClick = onEditClicked) {
+				Icon(
+					imageVector = Icons.Filled.Edit,
+					contentDescription = stringResource(R.string.edit_pet),
+				)
+			}
+		},
+	)
 }
 
 @Composable

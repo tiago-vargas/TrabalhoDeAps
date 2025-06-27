@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 	val (petName, setPetName) = remember { mutableStateOf("") }
@@ -35,34 +34,16 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
-		topBar = {
-			TopAppBar(
-				title = { Text(stringResource(R.string.add_pet)) },
-			)
-		},
+		topBar = { TopBar() },
 		bottomBar = {
-			BottomAppBar(
-				actions = {
-					Button(onClick = { /* TODO! */ }) {
-						Text("Cancel")
-					}
-					Spacer(Modifier.weight(1f))
-					Button(
-						onClick = {
-							val pet = Pet(
-								name = petName,
-								species = petSpecies,
-								birthDate = petBirthDate,
-								weight = petWeight,
-								gender = petGender,
-								wasSterilized = petIsSterilized,
-							)
-							onDoneClicked(pet)
-						},
-					) {
-						Text("Done")
-					}
-				},
+			BottomBar(
+				petName = petName,
+				petSpecies = petSpecies,
+				petBirthDate = petBirthDate,
+				petWeight = petWeight,
+				petGender = petGender,
+				petIsSterilized = petIsSterilized,
+				onDoneClicked = onDoneClicked,
 			)
 		},
 	) { innerPadding ->
@@ -85,6 +66,51 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 				.padding(innerPadding),
 		)
 	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar() {
+	TopAppBar(
+		title = { Text(stringResource(R.string.add_pet)) },
+	)
+}
+
+@Composable
+private fun BottomBar(
+	petName: String,
+	petSpecies: Species,
+	petBirthDate: Long,
+	petWeight: Double,
+	petGender: Gender,
+	petIsSterilized: Boolean,
+	onDoneClicked: (Pet) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	BottomAppBar(
+		actions = {
+			Button(onClick = { /* TODO! */ }) {
+				Text("Cancel")
+			}
+			Spacer(Modifier.weight(1f))
+			Button(
+				onClick = {
+					val pet = Pet(
+						name = petName,
+						species = petSpecies,
+						birthDate = petBirthDate,
+						weight = petWeight,
+						gender = petGender,
+						wasSterilized = petIsSterilized,
+					)
+					onDoneClicked(pet)
+				},
+			) {
+				Text("Done")
+			}
+		},
+		modifier = modifier,
+	)
 }
 
 @Preview(showBackground = true, showSystemUi = true)

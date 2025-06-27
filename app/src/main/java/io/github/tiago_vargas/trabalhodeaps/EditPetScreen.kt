@@ -48,28 +48,18 @@ fun EditPetScreen(
 			)
 		},
 		bottomBar = {
-			BottomAppBar(
-				actions = {
-					Button(onClick = { /* TODO! */ }) {
-						Text("Cancel")
-					}
-					Spacer(Modifier.weight(1f))
-					Button(
-						onClick = {
-							val pet = Pet(
-								id = pet.id,
-								name = petName,
-								species = petSpecies,
-								birthDate = petBirthDate,
-								weight = petWeight,
-								gender = petGender,
-								wasSterilized = petIsSterilized,
-							)
-							onDoneClicked(pet)
-						},
-					) {
-						Text("Done")
-					}
+			BottomBar(
+				onDoneClicked = {
+					val pet = Pet(
+						id = pet.id,
+						name = petName,
+						species = petSpecies,
+						birthDate = petBirthDate,
+						weight = petWeight,
+						gender = petGender,
+						wasSterilized = petIsSterilized,
+					)
+					onDoneClicked(pet)
 				},
 			)
 		},
@@ -102,6 +92,22 @@ fun EditPetScreen(
 			}
 		}
 	}
+}
+
+@Composable
+private fun BottomBar(onDoneClicked: () -> Unit, modifier: Modifier = Modifier) {
+	BottomAppBar(
+		actions = {
+			Button(onClick = { /* TODO! */ }) {
+				Text("Cancel")
+			}
+			Spacer(Modifier.weight(1.0f))
+			Button(onClick = onDoneClicked) {
+				Text("Done")
+			}
+		},
+		modifier = modifier,
+	)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
