@@ -32,12 +32,12 @@ fun EditPetScreen(
 	modifier: Modifier = Modifier,
 ) {
 	val sandboxPet = pet.copy()
-	val petName = remember { mutableStateOf(sandboxPet.name) }
-	val petSpecies = remember { mutableStateOf(sandboxPet.species) }
-	val petBirthDate = remember { mutableLongStateOf(sandboxPet.birthDate) }
-	val petWeight = remember { mutableDoubleStateOf(sandboxPet.weight) }
-	val petGender = remember { mutableStateOf(sandboxPet.gender) }
-	val petIsSterilized = remember { mutableStateOf(sandboxPet.wasSterilized) }
+	val (petName, setPetName) = remember { mutableStateOf(sandboxPet.name) }
+	val (petSpecies, setPetSpecies) = remember { mutableStateOf(sandboxPet.species) }
+	val (petBirthDate, setPetBirthDate) = remember { mutableLongStateOf(sandboxPet.birthDate) }
+	val (petWeight, setPetWeight) = remember { mutableDoubleStateOf(sandboxPet.weight) }
+	val (petGender, setPetGender) = remember { mutableStateOf(sandboxPet.gender) }
+	val (petIsSterilized, setPetIsSterilized) = remember { mutableStateOf(sandboxPet.wasSterilized) }
 	val scrollState = rememberScrollState()
 
 	Scaffold(
@@ -45,14 +45,6 @@ fun EditPetScreen(
 		topBar = {
 			TopAppBar(
 				title = { Text(stringResource(R.string.edit_pet)) },
-//				navigationIcon = {
-//					IconButton(onClick = { /* TODO! onNavigateUp */ }) {
-//						Icon(
-//							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//							contentDescription = null,
-//						)
-//					}
-//				},
 			)
 		},
 		bottomBar = {
@@ -66,12 +58,12 @@ fun EditPetScreen(
 						onClick = {
 							val pet = Pet(
 								id = pet.id,
-								name = petName.value,
-								species = petSpecies.value,
-								birthDate = petBirthDate.longValue,
-								weight = petWeight.doubleValue.toDouble(),
-								gender = petGender.value,
-								wasSterilized = petIsSterilized.value,
+								name = petName,
+								species = petSpecies,
+								birthDate = petBirthDate,
+								weight = petWeight,
+								gender = petGender,
+								wasSterilized = petIsSterilized,
 							)
 							onDoneClicked(pet)
 						},
@@ -89,18 +81,18 @@ fun EditPetScreen(
 				.padding(innerPadding),
 		) {
 			PetForm(
-				petName = petName.value,
-				onPetNameChange = { s -> petName.value = s },
-				petSpecies = petSpecies.value,
-				onPetSpeciesChange = { species -> petSpecies.value = species },
-				petBirthDate = petBirthDate.longValue,
-				onPetBirthDateChange = { millis -> petBirthDate.longValue = millis },
-				petWeight = petWeight.doubleValue,
-				onPetWeightChange = { weight -> petWeight.doubleValue = weight },
-				petGender = petGender.value,
-				onPetGenderChange = { gender -> petGender.value = gender },
-				petIsSterilized = petIsSterilized.value,
-				onPetIsSterilizedChange = { isSterilized -> petIsSterilized.value = isSterilized },
+				petName = petName,
+				onPetNameChange = setPetName,
+				petSpecies = petSpecies,
+				onPetSpeciesChange = setPetSpecies,
+				petBirthDate = petBirthDate,
+				onPetBirthDateChange = setPetBirthDate,
+				petWeight = petWeight,
+				onPetWeightChange = setPetWeight,
+				petGender = petGender,
+				onPetGenderChange = setPetGender,
+				petIsSterilized = petIsSterilized,
+				onPetIsSterilizedChange = setPetIsSterilized,
 				modifier = modifier
 					.fillMaxWidth()
 					.padding(innerPadding),

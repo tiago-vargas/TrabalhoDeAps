@@ -22,17 +22,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-//fun AddPetScreen(onCancelClicked: () -> Unit, modifier: Modifier = Modifier) {
 fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
-	val petName = remember { mutableStateOf("") }
-	val petSpecies = remember { mutableStateOf(Species.Cat) }
-	val petBirthDate = remember { mutableLongStateOf(0L) }
-	val petWeight = remember { mutableDoubleStateOf(0.0) }
-	val petGender = remember { mutableStateOf(Gender.Male) }
-	val petIsSterilized = remember { mutableStateOf(false) }
+	val (petName, setPetName) = remember { mutableStateOf("") }
+	val (petSpecies, setPetSpecies) = remember { mutableStateOf(Species.Cat) }
+	val (petBirthDate, setPetBirthDate) = remember { mutableLongStateOf(0L) }
+	val (petWeight, setPetWeight) = remember { mutableDoubleStateOf(0.0) }
+	val (petGender, setPetGender) = remember { mutableStateOf(Gender.Male) }
+	val (petIsSterilized, setPetIsSterilized) = remember { mutableStateOf(false) }
 	val scrollState = rememberScrollState()
 
 	Scaffold(
@@ -40,14 +38,6 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 		topBar = {
 			TopAppBar(
 				title = { Text(stringResource(R.string.add_pet)) },
-//				navigationIcon = {
-//					IconButton(onClick = { /* TODO! onNavigateUp */ }) {
-//						Icon(
-//							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//							contentDescription = null,
-//						)
-//					}
-//				},
 			)
 		},
 		bottomBar = {
@@ -60,12 +50,12 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 					Button(
 						onClick = {
 							val pet = Pet(
-								name = petName.value,
-								species = petSpecies.value,
-								birthDate = petBirthDate.longValue,
-								weight = petWeight.doubleValue,
-								gender = petGender.value,
-								wasSterilized = petIsSterilized.value,
+								name = petName,
+								species = petSpecies,
+								birthDate = petBirthDate,
+								weight = petWeight,
+								gender = petGender,
+								wasSterilized = petIsSterilized,
 							)
 							onDoneClicked(pet)
 						},
@@ -77,18 +67,18 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 		},
 	) { innerPadding ->
 		PetForm(
-			petName = petName.value,
-			onPetNameChange = { s -> petName.value = s },
-			petSpecies = petSpecies.value,
-			onPetSpeciesChange = { species -> petSpecies.value = species },
-			petBirthDate = petBirthDate.longValue,
-			onPetBirthDateChange = { millis -> petBirthDate.longValue = millis },
-			petWeight = petWeight.doubleValue,
-			onPetWeightChange = { weight -> petWeight.doubleValue = weight },
-			petGender = petGender.value,
-			onPetGenderChange = { gender -> petGender.value = gender },
-			petIsSterilized = petIsSterilized.value,
-			onPetIsSterilizedChange = { isSterilized -> petIsSterilized.value = isSterilized },
+			petName = petName,
+			onPetNameChange = setPetName,
+			petSpecies = petSpecies,
+			onPetSpeciesChange = setPetSpecies,
+			petBirthDate = petBirthDate,
+			onPetBirthDateChange = setPetBirthDate,
+			petWeight = petWeight,
+			onPetWeightChange = setPetWeight,
+			petGender = petGender,
+			onPetGenderChange = setPetGender,
+			petIsSterilized = petIsSterilized,
+			onPetIsSterilizedChange = setPetIsSterilized,
 			modifier = modifier
 				.fillMaxWidth()
 				.verticalScroll(scrollState)
