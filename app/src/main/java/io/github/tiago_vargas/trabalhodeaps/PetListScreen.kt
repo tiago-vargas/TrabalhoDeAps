@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -121,9 +123,8 @@ fun PetListScreen(
 		topBar = { TopBar(onAddClicked = onAddClicked) },
 	) { innerPadding ->
 		val pets = viewModel.cachedPets.collectAsState(initial = emptyList()).value
-//		TODO! Make this a Lazy Column to remember rows after scrolling them out of view
-		Column(modifier = Modifier.padding(innerPadding)) {
-			for (pet in pets) {
+		LazyColumn(modifier = Modifier.padding(innerPadding)) {
+			items(pets) { pet ->
 				PetRow(
 					pet = pet,
 					modifier = Modifier
