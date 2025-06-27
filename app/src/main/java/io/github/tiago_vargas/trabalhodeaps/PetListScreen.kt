@@ -1,8 +1,6 @@
 package io.github.tiago_vargas.trabalhodeaps
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,8 +26,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 @Composable
 fun PrePetListScreen(
@@ -41,38 +41,37 @@ fun PrePetListScreen(
 
 	NavHost(
 		navController = navController,
-		startDestination = AppScreen.PetList.name,
+		startDestination = AppScreen.PetList,
 		modifier = modifier,
 	) {
-		composable(route = AppScreen.PetList.name) {
+		composable<AppScreen.PetList> { navBackStackEntry ->
 			PetListScreen(
 				onPetClicked = { pet ->
-					navController.navigate(route = "${AppScreen.PetDetails.name}/${pet.id}")
+					navController.navigate(route = AppScreen.PetDetails(petId = pet.id))
 				},
-				onAddClicked = {
-					navController.navigate(route = AppScreen.AddPet.name)
-				},
+				onAddClicked = { navController.navigate(route = AppScreen.AddPet) },
 			)
 		}
-		composable(route = "${AppScreen.PetDetails.name}/{petId}") { navBackStackEntry ->
-			val petId = navBackStackEntry.arguments?.getString("petId")?.toInt()
+		composable<AppScreen.PetDetails> { navBackStackEntry ->
+			val details = navBackStackEntry.toRoute<AppScreen.PetDetails>()
+			val id = details.petId
 			val pet = viewModel
 				.cachedPets
 				.collectAsState(initial = emptyList())
 				.value
-				.find { it.id == petId }
+				.find { it.id == id }
 			if (pet == null) {
 				// This prevents the app from crashing
 				Text("Loading…")
 			} else {
 				PetDetailsScreen(
 					pet = pet,
-					onEditClicked = { navController.navigate(route = "${AppScreen.EditPet.name}/${pet.id}") },
+					onEditClicked = { navController.navigate(route = AppScreen.EditPet(petId = id)) },
 					onNavigateUp = { navController.navigateUp() },
 				)
 			}
 		}
-		composable(route = AppScreen.AddPet.name) {
+		composable<AppScreen.AddPet> {
 			AddPetScreen(
 				onDoneClicked = { pet ->
 					coroutineScope.launch { viewModel.petDao.insert(pet) }
@@ -80,13 +79,14 @@ fun PrePetListScreen(
 				},
 			)
 		}
-		composable(route = "${AppScreen.EditPet.name}/{petId}") { navBackStackEntry ->
-			val petId = navBackStackEntry.arguments?.getString("petId")?.toInt()
+		composable<AppScreen.EditPet> { navBackStackEntry ->
+			val editPet = navBackStackEntry.toRoute<AppScreen.EditPet>()
+			val id = editPet.petId
 			val pet = viewModel
 				.cachedPets
 				.collectAsState(initial = emptyList())
 				.value
-				.find { it.id == petId }
+				.find { it.id == id }
 			if (pet == null) {
 				// This prevents the app from crashing
 				Text("Loading…")
@@ -102,7 +102,7 @@ fun PrePetListScreen(
 					onDeleteClicked = { pet ->
 						coroutineScope.launch {
 							viewModel.petDao.delete(pet)
-							navController.navigate(route = AppScreen.PetList.name)
+							navController.navigate(route = AppScreen.PetList)
 						}
 					},
 				)
@@ -154,16 +154,23 @@ private fun TopBar(onAddClicked: () -> Unit, modifier: Modifier = Modifier) {
 	)
 }
 
-private enum class AppScreen(@StringRes val title: Int) {
-	PetList(title = R.string.pet_list),
-	PetDetails(title = R.string.pet_details),
-	AddPet(title = R.string.add_pet),
-	EditPet(title = R.string.edit_pet),
-}
-
 @Composable
 fun PetRow(pet: Pet, modifier: Modifier = Modifier) {
 	Text(pet.name, modifier = modifier)
+}
+
+sealed class AppScreen {
+	@Serializable
+	data object PetList : AppScreen()
+
+	@Serializable
+	data class PetDetails(val petId: Int) : AppScreen()
+
+	@Serializable
+	data object AddPet : AppScreen()
+
+	@Serializable
+	data class EditPet(val petId: Int) : AppScreen()
 }
 
 @Preview(showBackground = true, showSystemUi = true)
