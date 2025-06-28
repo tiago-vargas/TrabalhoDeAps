@@ -13,8 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,42 +22,19 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @Composable
 fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
-	val (petName, setPetName) = remember { mutableStateOf("") }
-	val (petSpecies, setPetSpecies) = remember { mutableStateOf(Species.Cat) }
-	val (petBirthDate, setPetBirthDate) = remember { mutableLongStateOf(0L) }
-	val (petWeight, setPetWeight) = remember { mutableDoubleStateOf(0.0) }
-	val (petGender, setPetGender) = remember { mutableStateOf(Gender.Male) }
-	val (petIsSterilized, setPetIsSterilized) = remember { mutableStateOf(false) }
+	val (pet, setPet) = remember { mutableStateOf(Pet(name = "", species = Species.Cat)) }
 	val scrollState = rememberScrollState()
 
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
 		topBar = { TopBar() },
 		bottomBar = {
-			BottomBar(
-				petName = petName,
-				petSpecies = petSpecies,
-				petBirthDate = petBirthDate,
-				petWeight = petWeight,
-				petGender = petGender,
-				petIsSterilized = petIsSterilized,
-				onDoneClicked = onDoneClicked,
-			)
+			BottomBar(onDoneClicked = { onDoneClicked(pet) })
 		},
 	) { innerPadding ->
 		PetForm(
-			petName = petName,
-			onPetNameChange = setPetName,
-			petSpecies = petSpecies,
-			onPetSpeciesChange = setPetSpecies,
-			petBirthDate = petBirthDate,
-			onPetBirthDateChange = setPetBirthDate,
-			petWeight = petWeight,
-			onPetWeightChange = setPetWeight,
-			petGender = petGender,
-			onPetGenderChange = setPetGender,
-			petIsSterilized = petIsSterilized,
-			onPetIsSterilizedChange = setPetIsSterilized,
+			pet = pet,
+			onPetChange = setPet,
 			modifier = modifier
 				.fillMaxWidth()
 				.verticalScroll(scrollState)
@@ -77,35 +52,14 @@ fun TopBar() {
 }
 
 @Composable
-private fun BottomBar(
-	petName: String,
-	petSpecies: Species,
-	petBirthDate: Long,
-	petWeight: Double,
-	petGender: Gender,
-	petIsSterilized: Boolean,
-	onDoneClicked: (Pet) -> Unit,
-	modifier: Modifier = Modifier,
-) {
+private fun BottomBar(onDoneClicked: () -> Unit, modifier: Modifier = Modifier) {
 	BottomAppBar(
 		actions = {
 			Button(onClick = { /* TODO! */ }) {
 				Text("Cancel")
 			}
 			Spacer(Modifier.weight(1f))
-			Button(
-				onClick = {
-					val pet = Pet(
-						name = petName,
-						species = petSpecies,
-						birthDate = petBirthDate,
-						weight = petWeight,
-						gender = petGender,
-						wasSterilized = petIsSterilized,
-					)
-					onDoneClicked(pet)
-				},
-			) {
+			Button(onClick = onDoneClicked) {
 				Text("Done")
 			}
 		},

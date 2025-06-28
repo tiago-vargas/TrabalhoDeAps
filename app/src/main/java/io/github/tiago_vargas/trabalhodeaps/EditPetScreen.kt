@@ -14,8 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,13 +29,7 @@ fun EditPetScreen(
 	onDeleteClicked: (Pet) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	val sandboxPet = pet.copy()
-	val (petName, setPetName) = remember { mutableStateOf(sandboxPet.name) }
-	val (petSpecies, setPetSpecies) = remember { mutableStateOf(sandboxPet.species) }
-	val (petBirthDate, setPetBirthDate) = remember { mutableLongStateOf(sandboxPet.birthDate) }
-	val (petWeight, setPetWeight) = remember { mutableDoubleStateOf(sandboxPet.weight) }
-	val (petGender, setPetGender) = remember { mutableStateOf(sandboxPet.gender) }
-	val (petIsSterilized, setPetIsSterilized) = remember { mutableStateOf(sandboxPet.wasSterilized) }
+	val (sandboxPet, setSandboxPet) = remember { mutableStateOf(pet.copy()) }
 	val scrollState = rememberScrollState()
 
 	Scaffold(
@@ -48,20 +40,7 @@ fun EditPetScreen(
 			)
 		},
 		bottomBar = {
-			BottomBar(
-				onDoneClicked = {
-					val pet = Pet(
-						id = pet.id,
-						name = petName,
-						species = petSpecies,
-						birthDate = petBirthDate,
-						weight = petWeight,
-						gender = petGender,
-						wasSterilized = petIsSterilized,
-					)
-					onDoneClicked(pet)
-				},
-			)
+			BottomBar(onDoneClicked = { onDoneClicked(sandboxPet) })
 		},
 	) { innerPadding ->
 		Column(
@@ -71,23 +50,13 @@ fun EditPetScreen(
 				.padding(innerPadding),
 		) {
 			PetForm(
-				petName = petName,
-				onPetNameChange = setPetName,
-				petSpecies = petSpecies,
-				onPetSpeciesChange = setPetSpecies,
-				petBirthDate = petBirthDate,
-				onPetBirthDateChange = setPetBirthDate,
-				petWeight = petWeight,
-				onPetWeightChange = setPetWeight,
-				petGender = petGender,
-				onPetGenderChange = setPetGender,
-				petIsSterilized = petIsSterilized,
-				onPetIsSterilizedChange = setPetIsSterilized,
+				pet = sandboxPet,
+				onPetChange = setSandboxPet,
 				modifier = modifier
 					.fillMaxWidth()
 					.padding(innerPadding),
 			)
-			Button(onClick = { onDeleteClicked(pet) }) {
+			Button(onClick = { onDeleteClicked(sandboxPet) }) {
 				Text("Delete")  // TODO! Extract
 			}
 		}

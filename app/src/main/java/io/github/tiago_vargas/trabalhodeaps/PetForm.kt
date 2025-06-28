@@ -33,35 +33,36 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun PetForm(
-	petName: String,
-	onPetNameChange: (String) -> Unit,
-	petSpecies: Species,
-	onPetSpeciesChange: (Species) -> Unit,
-	petBirthDate: Long,
-	onPetBirthDateChange: (Long) -> Unit,
-	petWeight: Double,
-	onPetWeightChange: (Double) -> Unit,
-	petGender: Gender,
-	onPetGenderChange: (Gender) -> Unit,
-	petIsSterilized: Boolean,
-	onPetIsSterilizedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier,
-) {
+fun PetForm(pet: Pet, onPetChange: (Pet) -> Unit, modifier: Modifier = Modifier) {
 	Column(
 		modifier = modifier,
 		horizontalAlignment = Alignment.Companion.CenterHorizontally,
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 	) {
 		Avatar()
-		NameEntryRow(petName = petName, onPetNameChange = onPetNameChange)
-		SpeciesComboRow(petSpecies = petSpecies, onPetSpeciesChange = onPetSpeciesChange)
-		BirthDateActionRow(petBirthDate = petBirthDate, onPetBirthDateChange = onPetBirthDateChange)
-		GenderComboRow(petGender = petGender, onPetGenderChange = onPetGenderChange)
-		WeightEntryRow(petWeight = petWeight, onPetWeightChange = onPetWeightChange)
+		NameEntryRow(
+			petName = pet.name,
+			onPetNameChange = { name -> onPetChange(pet.copy(name = name)) },
+		)
+		SpeciesComboRow(
+			petSpecies = pet.species,
+			onPetSpeciesChange = { species -> onPetChange(pet.copy(species = species)) },
+		)
+		BirthDateActionRow(
+			petBirthDate = pet.birthDate,
+			onPetBirthDateChange = { birthDate -> onPetChange(pet.copy(birthDate = birthDate)) },
+		)
+		GenderComboRow(
+			petGender = pet.gender,
+			onPetGenderChange = { gender -> onPetChange(pet.copy(gender = gender)) },
+		)
+		WeightEntryRow(
+			petWeight = pet.weight,
+			onPetWeightChange = { weight -> onPetChange(pet.copy(weight = weight)) },
+		)
 		IsSterilizedComboRow(
-			petIsSterilized = petIsSterilized,
-			onPetIsSterilizedChange = onPetIsSterilizedChange,
+			petIsSterilized = pet.wasSterilized,
+			onPetIsSterilizedChange = { wasSterilized -> onPetChange(pet.copy(wasSterilized = wasSterilized)) },
 		)
 	}
 }
@@ -266,18 +267,8 @@ private fun DropDownIconButton(
 fun PetFormPreview() {
 	TrabalhoDeApsTheme {
 		PetForm(
-			petName = "Cashew",
-			onPetNameChange = {},
-			petSpecies = Species.Cat,
-			onPetSpeciesChange = {},
-			petBirthDate = 0,
-			onPetBirthDateChange = {},
-			petWeight = 4.5,
-			onPetWeightChange = {},
-			petGender = Gender.Male,
-			onPetGenderChange = {},
-			petIsSterilized = false,
-			onPetIsSterilizedChange = {},
+			pet = Pet(name = "", species = Species.Cat),
+			onPetChange = { pet -> },
 		)
 	}
 }
