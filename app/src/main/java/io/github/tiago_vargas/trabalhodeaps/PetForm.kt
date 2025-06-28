@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
@@ -84,7 +85,7 @@ fun NameEntryRow(
 		petName,
 		onValueChange = onPetNameChange,
 		modifier = modifier,
-		label = { Text("Name") },  // TODO! Extract
+		label = { Text(stringResource(R.string.form_field_name)) },
 	)
 }
 
@@ -100,11 +101,11 @@ fun SpeciesComboRow(
 			petSpecies.toString(),
 			readOnly = true,
 			onValueChange = { s -> },
-			label = { Text("Species") },  // TODO! Extract
+			label = { Text(stringResource(R.string.form_field_species)) },
 			trailingIcon = {
 				DropDownIconButton(
 					onClick = { dropdownMenuIsExpanded.value = true },
-					contentDescription = "Pick Species",  // TODO! Extract
+					contentDescription = stringResource(R.string.pick_species),
 				)
 			},
 		)
@@ -148,12 +149,12 @@ fun BirthDateActionRow(
 						showDatePickerDialog.value = false
 					},
 				) {
-					Text(text = "Ok")  // TODO! Extract
+					Text(text = stringResource(R.string.okay))
 				}
 			},
 			dismissButton = {
 				Button(onClick = { showDatePickerDialog.value = false }) {
-					Text("Cancel")  // TODO! Extract
+					Text(stringResource(R.string.cancel))
 				}
 			},
 		) {
@@ -168,12 +169,12 @@ fun BirthDateActionRow(
 		onValueChange = { s -> },
 		modifier = modifier,
 		readOnly = true,
-		label = { Text("Birth Date") },  // TODO! Extract
+		label = { Text(stringResource(R.string.form_field_birth_date)) },
 		trailingIcon = {
 			IconButton(onClick = { showDatePickerDialog.value = true }) {
 				Icon(
 					imageVector = Icons.Filled.DateRange,
-					contentDescription = "Pick Date",  // TODO! Extract
+					contentDescription = stringResource(R.string.pick_date),
 				)
 			}
 		},
@@ -192,11 +193,11 @@ fun GenderComboRow(
 			petGender.toString(),
 			readOnly = true,
 			onValueChange = { s -> },
-			label = { Text("Gender") },  // TODO! Extract
+			label = { Text(stringResource(R.string.form_field_gender)) },
 			trailingIcon = {
 				DropDownIconButton(
 					onClick = { dropdownMenuIsExpanded.value = true },
-					contentDescription = "Pick Gender",  // TODO! Extract
+					contentDescription = stringResource(R.string.pick_gender),
 				)
 			},
 		)
@@ -227,7 +228,7 @@ fun WeightEntryRow(
 		petWeight.toString(),
 		onValueChange = { s -> onPetWeightChange(s.toDouble()) },
 		modifier = modifier,
-		label = { Text("Weight") },  // TODO! Extract
+		label = { Text(stringResource(R.string.form_field_weight)) },
 		suffix = { Text("kg") },
 	)
 }
@@ -241,14 +242,14 @@ fun IsSterilizedComboRow(
 	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
 	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
-			if (petIsSterilized) "Yes" else "No",  // TODO! Extract
+			if (petIsSterilized) stringResource(R.string.yes) else stringResource(R.string.no),
 			readOnly = true,
 			onValueChange = { s -> },
-			label = { Text("Is Sterilized?") },  // TODO! Extract
+			label = { Text(stringResource(R.string.form_field_is_sterilized)) },
 			trailingIcon = {
 				DropDownIconButton(
 					onClick = { dropdownMenuIsExpanded.value = true },
-					contentDescription = "Pick Species",  // TODO! Extract
+					contentDescription = stringResource(R.string.pick_sterilization_status),
 				)
 			},
 		)
@@ -258,7 +259,7 @@ fun IsSterilizedComboRow(
 		) {
 			for (option in listOf(true, false)) {
 				DropdownMenuItem(
-					text = { Text(if (option) "Yes" else "No") },  // TODO! Extract
+					text = { Text(if (option) stringResource(R.string.yes) else stringResource(R.string.no)) },
 					onClick = {
 						onPetIsSterilizedChange(option)
 						dropdownMenuIsExpanded.value = false

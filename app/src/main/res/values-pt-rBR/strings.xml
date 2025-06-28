@@ -6,4 +6,18 @@
 	<string name="pet_details">Detalhes do Pet</string>
 	<string name="edit_pet">Editar Pet</string>
 	<string name="pet_list">Pets</string>
+	<string name="okay">OK</string>
+	<string name="cancel">Cancelar</string>
+	<string name="yes">Sim</string>
+	<string name="no">Não</string>
+	<string name="form_field_name">Nome</string>
+	<string name="form_field_species">Espécie</string>
+	<string name="pick_species">Escolher Espécie</string>
+	<string name="form_field_birth_date">Data de Nascimento</string>
+	<string name="pick_date">Escolher Data</string>
+	<string name="form_field_gender">Sexo</string>
+	<string name="pick_gender">Escolher Sexo</string>
+	<string name="form_field_weight">Peso</string>
+	<string name="form_field_is_sterilized">É Castrado(a)?</string>
+	<string name="pick_sterilization_status">Escolher Status de Castração</string>
 </resources>
