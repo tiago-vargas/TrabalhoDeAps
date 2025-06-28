@@ -102,12 +102,10 @@ fun SpeciesComboRow(
 			onValueChange = { s -> },
 			label = { Text("Species") },  // TODO! Extract
 			trailingIcon = {
-				IconButton(onClick = { speciesDropdownMenuIsExpanded.value = true }) {
-					Icon(
-						Icons.Filled.ArrowDropDown,
-						contentDescription = "Pick Species",  // TODO! Extract
-					)
-				}
+				DropDownIconButton(
+					onClick = { dropdownMenuIsExpanded.value = true },
+					contentDescription = "Pick Species",  // TODO! Extract
+				)
 			},
 		)
 		DropdownMenu(
@@ -196,12 +194,10 @@ fun GenderComboRow(
 			onValueChange = { s -> },
 			label = { Text("Gender") },  // TODO! Extract
 			trailingIcon = {
-				IconButton(onClick = { genderDropdownMenuIsExpanded.value = true }) {
-					Icon(
-						Icons.Filled.ArrowDropDown,
-						contentDescription = "Pick Gender",  // TODO! Extract
-					)
-				}
+				DropDownIconButton(
+					onClick = { dropdownMenuIsExpanded.value = true },
+					contentDescription = "Pick Gender",  // TODO! Extract
+				)
 			},
 		)
 		DropdownMenu(
@@ -250,12 +246,10 @@ fun IsSterilizedComboRow(
 			onValueChange = { s -> },
 			label = { Text("Is Sterilized?") },  // TODO! Extract
 			trailingIcon = {
-				IconButton(onClick = { isSterilizedDropdownMenuIsExpanded.value = true }) {
-					Icon(
-						Icons.Filled.ArrowDropDown,
-						contentDescription = "Pick Species",  // TODO! Extract
-					)
-				}
+				DropDownIconButton(
+					onClick = { dropdownMenuIsExpanded.value = true },
+					contentDescription = "Pick Species",  // TODO! Extract
+				)
 			},
 		)
 		DropdownMenu(
@@ -272,6 +266,20 @@ fun IsSterilizedComboRow(
 				)
 			}
 		}
+	}
+}
+
+@Composable
+private fun DropDownIconButton(
+	onClick: () -> Unit,
+	contentDescription: String,
+	modifier: Modifier = Modifier,
+) {
+	IconButton(onClick = onClick, modifier = modifier) {
+		Icon(
+			imageVector = Icons.Filled.ArrowDropDown,
+			contentDescription = contentDescription,
+		)
 	}
 }
 
