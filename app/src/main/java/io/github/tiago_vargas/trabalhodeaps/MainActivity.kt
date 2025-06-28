@@ -63,7 +63,6 @@ fun Content(
 	modifier: Modifier = Modifier,
 ) {
 	val navController: NavHostController = rememberNavController()
-	val viewModel = viewModel<LoginViewModel>()
 	val coroutineScope = rememberCoroutineScope()
 	val petListViewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
 
@@ -75,7 +74,6 @@ fun Content(
 		composable<AppScreen.Login> {
 			LoginScreen(
 				context = context,
-				viewModel = viewModel,
 				snackbarHostState = snackbarHostState,
 				onLoginSuccess = {
 					navController.navigate(route = AppScreen.PetList) {

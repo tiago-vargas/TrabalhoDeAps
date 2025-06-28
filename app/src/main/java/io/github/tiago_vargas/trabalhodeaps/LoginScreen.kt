@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.callback.Callback
@@ -29,7 +28,6 @@ fun LoginScreen(
 	snackbarHostState: SnackbarHostState,
 	onLoginSuccess: () -> Unit,
 	modifier: Modifier = Modifier,
-	viewModel: LoginViewModel = viewModel(),
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	val account = getAuth0Instance(context)
@@ -44,7 +42,6 @@ fun LoginScreen(
 			}
 
 			override fun onSuccess(result: Credentials) {
-				viewModel.setIsLoggedIn(true)
 				onLoginSuccess()
 			}
 		}
