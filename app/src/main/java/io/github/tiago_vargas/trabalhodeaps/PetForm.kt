@@ -99,8 +99,8 @@ fun SpeciesComboRow(
 	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
 			petSpecies.toString(),
-			readOnly = true,
 			onValueChange = { s -> },
+			readOnly = true,
 			label = { Text(stringResource(R.string.form_field_species)) },
 			trailingIcon = {
 				DropDownIconButton(
@@ -162,10 +162,7 @@ fun BirthDateActionRow(
 		}
 	}
 	OutlinedTextField(
-		value = {
-			val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-			sdf.format(Date(petBirthDate))
-		}(),
+		value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(petBirthDate)),
 		onValueChange = { s -> },
 		modifier = modifier,
 		readOnly = true,
@@ -191,8 +188,8 @@ fun GenderComboRow(
 	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
 			petGender.toString(),
-			readOnly = true,
 			onValueChange = { s -> },
+			readOnly = true,
 			label = { Text(stringResource(R.string.form_field_gender)) },
 			trailingIcon = {
 				DropDownIconButton(
@@ -243,8 +240,8 @@ fun IsSterilizedComboRow(
 	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
 			if (petIsSterilized) stringResource(R.string.yes) else stringResource(R.string.no),
-			readOnly = true,
 			onValueChange = { s -> },
+			readOnly = true,
 			label = { Text(stringResource(R.string.form_field_is_sterilized)) },
 			trailingIcon = {
 				DropDownIconButton(
