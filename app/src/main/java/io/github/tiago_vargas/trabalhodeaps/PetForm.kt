@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
@@ -33,7 +31,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetForm(
 	petName: String,
@@ -55,163 +52,224 @@ fun PetForm(
 		horizontalAlignment = Alignment.Companion.CenterHorizontally,
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 	) {
-		Icon(
-			imageVector = Icons.Filled.Person,
-			contentDescription = null,
-			modifier = Modifier.size(200.dp),
+		Avatar()
+		NameEntryRow(petName = petName, onPetNameChange = onPetNameChange)
+		SpeciesComboRow(petSpecies = petSpecies, onPetSpeciesChange = onPetSpeciesChange)
+		BirthDateActionRow(petBirthDate = petBirthDate, onPetBirthDateChange = onPetBirthDateChange)
+		GenderComboRow(petGender = petGender, onPetGenderChange = onPetGenderChange)
+		WeightEntryRow(petWeight = petWeight, onPetWeightChange = onPetWeightChange)
+		IsSterilizedComboRow(
+			petIsSterilized = petIsSterilized,
+			onPetIsSterilizedChange = onPetIsSterilizedChange,
 		)
+	}
+}
 
+@Composable
+fun Avatar(modifier: Modifier = Modifier) {
+	Icon(
+		imageVector = Icons.Filled.Person,
+		contentDescription = null,
+		modifier = modifier.size(200.dp),
+	)
+}
+
+@Composable
+fun NameEntryRow(
+	petName: String,
+	onPetNameChange: (String) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	OutlinedTextField(
+		petName,
+		onValueChange = onPetNameChange,
+		modifier = modifier,
+		label = { Text("Name") },  // TODO! Extract
+	)
+}
+
+@Composable
+fun SpeciesComboRow(
+	petSpecies: Species,
+	onPetSpeciesChange: (Species) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
+	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
-			petName,
-			onValueChange = onPetNameChange,
-			label = { Text("Name") },  // TODO! Extract
-		)
-
-		val speciesDropdownMenuIsExpanded = remember { mutableStateOf(false) }
-		Box(contentAlignment = Alignment.Companion.TopEnd) {
-			OutlinedTextField(
-				petSpecies.toString(),
-				readOnly = true,
-				onValueChange = { s -> },
-				label = { Text("Species") },  // TODO! Extract
-				trailingIcon = {
-					IconButton(onClick = { speciesDropdownMenuIsExpanded.value = true }) {
-						Icon(
-							Icons.Filled.ArrowDropDown,
-							contentDescription = "Pick Species",  // TODO! Extract
-						)
-					}
-				})
-			DropdownMenu(
-				expanded = speciesDropdownMenuIsExpanded.value,
-				onDismissRequest = { speciesDropdownMenuIsExpanded.value = false },
-			) {
-				for (species in Species.entries) {
-					DropdownMenuItem(
-						text = { Text(species.toString()) },
-						onClick = {
-							onPetSpeciesChange(species)
-							speciesDropdownMenuIsExpanded.value = false
-						},
-					)
-				}
-			}
-		}
-
-		val showDatePickerDialog = remember { mutableStateOf(false) }
-		val datePickerState = rememberDatePickerState()
-		val selectedDate = remember { mutableStateOf("") }
-		if (showDatePickerDialog.value) {
-			DatePickerDialog(
-				onDismissRequest = { showDatePickerDialog.value = false },
-				confirmButton = {
-					Button(
-						onClick = {
-							datePickerState.selectedDateMillis?.let { millis ->
-								selectedDate.value = millis.toString()
-								onPetBirthDateChange(millis)
-							}
-							showDatePickerDialog.value = false
-						},
-					) {
-						Text(text = "Ok")  // TODO! Extract
-					}
-				},
-				dismissButton = {
-					Button(onClick = { showDatePickerDialog.value = false }) {
-						Text("Cancel")  // TODO! Extract
-					}
-				},
-			) {
-				DatePicker(state = datePickerState)
-			}
-		}
-		OutlinedTextField(
-			value = {
-				val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-				sdf.format(Date(petBirthDate))
-			}(),
+			petSpecies.toString(),
 			readOnly = true,
 			onValueChange = { s -> },
-			label = { Text("Birth Date") },  // TODO! Extract
+			label = { Text("Species") },  // TODO! Extract
 			trailingIcon = {
-				IconButton(onClick = { showDatePickerDialog.value = true }) {
+				IconButton(onClick = { speciesDropdownMenuIsExpanded.value = true }) {
 					Icon(
-						imageVector = Icons.Filled.DateRange,
-						contentDescription = "Pick Date",  // TODO! Extract
+						Icons.Filled.ArrowDropDown,
+						contentDescription = "Pick Species",  // TODO! Extract
 					)
 				}
 			},
 		)
-
-		val genderDropdownMenuIsExpanded = remember { mutableStateOf(false) }
-		Box(contentAlignment = Alignment.Companion.TopEnd) {
-			OutlinedTextField(
-				petGender.toString(),
-				readOnly = true,
-				onValueChange = { s -> },
-				label = { Text("Gender") },  // TODO! Extract
-				trailingIcon = {
-					IconButton(onClick = { genderDropdownMenuIsExpanded.value = true }) {
-						Icon(
-							Icons.Filled.ArrowDropDown,
-							contentDescription = "Pick Gender",  // TODO! Extract
-						)
-					}
-				},
-			)
-			DropdownMenu(
-				expanded = genderDropdownMenuIsExpanded.value,
-				onDismissRequest = { genderDropdownMenuIsExpanded.value = false },
-			) {
-				for (gender in Gender.entries) {
-					DropdownMenuItem(
-						text = { Text(gender.toString()) },
-						onClick = {
-							onPetGenderChange(gender)
-							genderDropdownMenuIsExpanded.value = false
-						},
-					)
-				}
+		DropdownMenu(
+			expanded = dropdownMenuIsExpanded.value,
+			onDismissRequest = { dropdownMenuIsExpanded.value = false },
+		) {
+			for (species in Species.entries) {
+				DropdownMenuItem(
+					text = { Text(species.toString()) },
+					onClick = {
+						onPetSpeciesChange(species)
+						dropdownMenuIsExpanded.value = false
+					},
+				)
 			}
 		}
+	}
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BirthDateActionRow(
+	petBirthDate: Long,
+	onPetBirthDateChange: (Long) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val showDatePickerDialog = remember { mutableStateOf(false) }
+	val datePickerState = rememberDatePickerState()
+	val selectedDate = remember { mutableStateOf("") }
+	if (showDatePickerDialog.value) {
+		DatePickerDialog(
+			onDismissRequest = { showDatePickerDialog.value = false },
+			confirmButton = {
+				Button(
+					onClick = {
+						datePickerState.selectedDateMillis?.let { millis ->
+							selectedDate.value = millis.toString()
+							onPetBirthDateChange(millis)
+						}
+						showDatePickerDialog.value = false
+					},
+				) {
+					Text(text = "Ok")  // TODO! Extract
+				}
+			},
+			dismissButton = {
+				Button(onClick = { showDatePickerDialog.value = false }) {
+					Text("Cancel")  // TODO! Extract
+				}
+			},
+		) {
+			DatePicker(state = datePickerState)
+		}
+	}
+	OutlinedTextField(
+		value = {
+			val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+			sdf.format(Date(petBirthDate))
+		}(),
+		onValueChange = { s -> },
+		modifier = modifier,
+		readOnly = true,
+		label = { Text("Birth Date") },  // TODO! Extract
+		trailingIcon = {
+			IconButton(onClick = { showDatePickerDialog.value = true }) {
+				Icon(
+					imageVector = Icons.Filled.DateRange,
+					contentDescription = "Pick Date",  // TODO! Extract
+				)
+			}
+		},
+	)
+}
+
+@Composable
+fun GenderComboRow(
+	petGender: Gender,
+	onPetGenderChange: (Gender) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
+	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
-			petWeight.toString(),
-			onValueChange = { s -> onPetWeightChange(s.toDouble()) },
-			label = { Text("Weight") },  // TODO! Extract
-			suffix = { Text("kg") },
-		)
-
-		val isSterilizedDropdownMenuIsExpanded = remember { mutableStateOf(false) }
-		Box(contentAlignment = Alignment.Companion.TopEnd) {
-			OutlinedTextField(
-				if (petIsSterilized) "Yes" else "No",  // TODO! Extract
-				readOnly = true,
-				onValueChange = { s -> },
-				label = { Text("Is Sterilized?") },  // TODO! Extract
-				trailingIcon = {
-					IconButton(onClick = { isSterilizedDropdownMenuIsExpanded.value = true }) {
-						Icon(
-							Icons.Filled.ArrowDropDown,
-							contentDescription = "Pick Species",  // TODO! Extract
-						)
-					}
-				},
-			)
-			DropdownMenu(
-				expanded = isSterilizedDropdownMenuIsExpanded.value,
-				onDismissRequest = { isSterilizedDropdownMenuIsExpanded.value = false },
-			) {
-				for (option in listOf(true, false)) {
-					DropdownMenuItem(
-						text = { Text(if (option) "Yes" else "No") },  // TODO! Extract
-						onClick = {
-							onPetIsSterilizedChange(option)
-							isSterilizedDropdownMenuIsExpanded.value = false
-						},
+			petGender.toString(),
+			readOnly = true,
+			onValueChange = { s -> },
+			label = { Text("Gender") },  // TODO! Extract
+			trailingIcon = {
+				IconButton(onClick = { genderDropdownMenuIsExpanded.value = true }) {
+					Icon(
+						Icons.Filled.ArrowDropDown,
+						contentDescription = "Pick Gender",  // TODO! Extract
 					)
 				}
+			},
+		)
+		DropdownMenu(
+			expanded = dropdownMenuIsExpanded.value,
+			onDismissRequest = { dropdownMenuIsExpanded.value = false },
+		) {
+			for (gender in Gender.entries) {
+				DropdownMenuItem(
+					text = { Text(gender.toString()) },
+					onClick = {
+						onPetGenderChange(gender)
+						dropdownMenuIsExpanded.value = false
+					},
+				)
+			}
+		}
+	}
+}
+
+@Composable
+fun WeightEntryRow(
+	petWeight: Double,
+	onPetWeightChange: (Double) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	OutlinedTextField(
+		petWeight.toString(),
+		onValueChange = { s -> onPetWeightChange(s.toDouble()) },
+		modifier = modifier,
+		label = { Text("Weight") },  // TODO! Extract
+		suffix = { Text("kg") },
+	)
+}
+
+@Composable
+fun IsSterilizedComboRow(
+	petIsSterilized: Boolean,
+	onPetIsSterilizedChange: (Boolean) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
+	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
+		OutlinedTextField(
+			if (petIsSterilized) "Yes" else "No",  // TODO! Extract
+			readOnly = true,
+			onValueChange = { s -> },
+			label = { Text("Is Sterilized?") },  // TODO! Extract
+			trailingIcon = {
+				IconButton(onClick = { isSterilizedDropdownMenuIsExpanded.value = true }) {
+					Icon(
+						Icons.Filled.ArrowDropDown,
+						contentDescription = "Pick Species",  // TODO! Extract
+					)
+				}
+			},
+		)
+		DropdownMenu(
+			expanded = dropdownMenuIsExpanded.value,
+			onDismissRequest = { dropdownMenuIsExpanded.value = false },
+		) {
+			for (option in listOf(true, false)) {
+				DropdownMenuItem(
+					text = { Text(if (option) "Yes" else "No") },  // TODO! Extract
+					onClick = {
+						onPetIsSterilizedChange(option)
+						dropdownMenuIsExpanded.value = false
+					},
+				)
 			}
 		}
 	}
