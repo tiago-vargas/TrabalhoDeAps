@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
 	context: Context,
 	snackbarHostState: SnackbarHostState,
+	onLoginSuccess: () -> Unit,
 	modifier: Modifier = Modifier,
 	viewModel: LoginViewModel = viewModel(),
 ) {
@@ -44,6 +45,7 @@ fun LoginScreen(
 
 			override fun onSuccess(result: Credentials) {
 				viewModel.setIsLoggedIn(true)
+				onLoginSuccess()
 			}
 		}
 		WebAuthProvider
