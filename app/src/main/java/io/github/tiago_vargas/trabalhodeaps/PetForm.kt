@@ -95,35 +95,14 @@ fun SpeciesComboRow(
 	onPetSpeciesChange: (Species) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
-	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
-		OutlinedTextField(
-			petSpecies.toString(),
-			onValueChange = { s -> },
-			readOnly = true,
-			label = { Text(stringResource(R.string.form_field_species)) },
-			trailingIcon = {
-				DropDownIconButton(
-					onClick = { dropdownMenuIsExpanded.value = true },
-					contentDescription = stringResource(R.string.pick_species),
-				)
-			},
-		)
-		DropdownMenu(
-			expanded = dropdownMenuIsExpanded.value,
-			onDismissRequest = { dropdownMenuIsExpanded.value = false },
-		) {
-			for (species in Species.entries) {
-				DropdownMenuItem(
-					text = { Text(species.toString()) },
-					onClick = {
-						onPetSpeciesChange(species)
-						dropdownMenuIsExpanded.value = false
-					},
-				)
-			}
-		}
-	}
+	ComboRow(
+		value = petSpecies,
+		onEntryChosen = onPetSpeciesChange,
+		label = stringResource(R.string.form_field_species),
+		contentDescription = stringResource(R.string.pick_species),
+		entries = Species.entries,
+		modifier = modifier,
+	)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -184,35 +163,14 @@ fun GenderComboRow(
 	onPetGenderChange: (Gender) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
-	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
-		OutlinedTextField(
-			petGender.toString(),
-			onValueChange = { s -> },
-			readOnly = true,
-			label = { Text(stringResource(R.string.form_field_gender)) },
-			trailingIcon = {
-				DropDownIconButton(
-					onClick = { dropdownMenuIsExpanded.value = true },
-					contentDescription = stringResource(R.string.pick_gender),
-				)
-			},
-		)
-		DropdownMenu(
-			expanded = dropdownMenuIsExpanded.value,
-			onDismissRequest = { dropdownMenuIsExpanded.value = false },
-		) {
-			for (gender in Gender.entries) {
-				DropdownMenuItem(
-					text = { Text(gender.toString()) },
-					onClick = {
-						onPetGenderChange(gender)
-						dropdownMenuIsExpanded.value = false
-					},
-				)
-			}
-		}
-	}
+	ComboRow(
+		value = petGender,
+		onEntryChosen = onPetGenderChange,
+		label = stringResource(R.string.form_field_gender),
+		contentDescription = stringResource(R.string.pick_gender),
+		entries = Gender.entries,
+		modifier = modifier,
+	)
 }
 
 @Composable
@@ -236,17 +194,39 @@ fun IsSterilizedComboRow(
 	onPetIsSterilizedChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
+	ComboRow(
+		value = petIsSterilized,
+		onEntryChosen = onPetIsSterilizedChange,
+		label = stringResource(R.string.form_field_is_sterilized),
+		contentDescription = stringResource(R.string.pick_sterilization_status),
+		entries = listOf(true, false),
+		modifier = modifier,
+		entryToString = { e -> if (e) stringResource(R.string.yes) else stringResource(R.string.no) },
+	)
+}
+
+
+@Composable
+private fun <T> ComboRow(
+	value: T,
+	onEntryChosen: (T) -> Unit,
+	label: String,
+	contentDescription: String,
+	entries: Iterable<T>,
+	modifier: Modifier = Modifier,
+	entryToString: @Composable (T) -> String = { e -> e.toString() },
+) {
 	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
 	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
 		OutlinedTextField(
-			if (petIsSterilized) stringResource(R.string.yes) else stringResource(R.string.no),
+			value = entryToString(value),
 			onValueChange = { s -> },
 			readOnly = true,
-			label = { Text(stringResource(R.string.form_field_is_sterilized)) },
+			label = { Text(label) },
 			trailingIcon = {
 				DropDownIconButton(
 					onClick = { dropdownMenuIsExpanded.value = true },
-					contentDescription = stringResource(R.string.pick_sterilization_status),
+					contentDescription = contentDescription,
 				)
 			},
 		)
@@ -254,11 +234,11 @@ fun IsSterilizedComboRow(
 			expanded = dropdownMenuIsExpanded.value,
 			onDismissRequest = { dropdownMenuIsExpanded.value = false },
 		) {
-			for (option in listOf(true, false)) {
+			for (option in entries) {
 				DropdownMenuItem(
-					text = { Text(if (option) stringResource(R.string.yes) else stringResource(R.string.no)) },
+					text = { Text(entryToString(option)) },
 					onClick = {
-						onPetIsSterilizedChange(option)
+						onEntryChosen(option)
 						dropdownMenuIsExpanded.value = false
 					},
 				)
