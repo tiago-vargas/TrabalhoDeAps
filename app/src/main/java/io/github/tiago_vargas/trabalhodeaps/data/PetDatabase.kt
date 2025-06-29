@@ -1,9 +1,11 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import io.github.tiago_vargas.trabalhodeaps.Pet
+import io.github.tiago_vargas.trabalhodeaps.PetDao
 
 @Database(entities = [Pet::class], version = 1, exportSchema = false)
 abstract class PetDatabase : RoomDatabase() {

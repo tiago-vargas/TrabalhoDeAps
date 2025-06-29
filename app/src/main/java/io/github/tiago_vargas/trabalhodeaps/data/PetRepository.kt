@@ -1,5 +1,6 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.data
 
+import io.github.tiago_vargas.trabalhodeaps.Pet
 import kotlinx.coroutines.flow.Flow
 
 interface PetRepository {

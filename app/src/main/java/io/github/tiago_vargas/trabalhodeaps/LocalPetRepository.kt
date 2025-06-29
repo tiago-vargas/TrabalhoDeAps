@@ -1,5 +1,6 @@
 package io.github.tiago_vargas.trabalhodeaps
 
+import io.github.tiago_vargas.trabalhodeaps.data.PetRepository
 import kotlinx.coroutines.flow.Flow
 
 class LocalPetRepository(private val petDao: PetDao) : PetRepository {

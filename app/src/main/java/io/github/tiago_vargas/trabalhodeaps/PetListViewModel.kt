@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import io.github.tiago_vargas.trabalhodeaps.data.PetDatabase
+import io.github.tiago_vargas.trabalhodeaps.data.PetRepository
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
