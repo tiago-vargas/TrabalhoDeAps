@@ -45,11 +45,12 @@ fun PetListScreen(
 	modifier: Modifier = Modifier,
 	viewModel: PetListViewModel = viewModel(factory = PetListViewModel.Factory),
 ) {
+	val shouldShowFilterSelector = remember { mutableStateOf(false) }
 	Scaffold(
 		modifier = modifier,
 		topBar = {
 			TopBar(
-				onFilterClicked = { /*TODO*/ },
+				onFilterClicked = { shouldShowFilterSelector.value = !shouldShowFilterSelector.value },
 				onAddClicked = onAddClicked,
 			)
 		},
@@ -57,7 +58,11 @@ fun PetListScreen(
 		val pets = viewModel.cachedPets.collectAsState(initial = emptyList()).value
 		LazyColumn(modifier = Modifier.padding(innerPadding)) {
 			item {
-				FilterSelector(modifier = Modifier.padding(12.dp))
+				if (shouldShowFilterSelector.value) {
+					FilterSelector(
+						modifier = Modifier.padding(12.dp)
+					)
+				}
 			}
 
 			items(pets) { pet ->
