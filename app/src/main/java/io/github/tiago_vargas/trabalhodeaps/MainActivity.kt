@@ -16,12 +16,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -70,81 +72,104 @@ fun Content(
 		startDestination = AppScreen.Login,
 		modifier = modifier,
 	) {
-		composable<AppScreen.Login> {
-			LoginScreen(
-				context = context,
-				snackbarHostState = snackbarHostState,
-				onLoginSuccess = {
-					navController.navigate(route = AppScreen.PetList) {
-						popUpTo(route = AppScreen.Login) { inclusive = true }
+		loginGraph(
+			navController = navController,
+			context = context,
+			snackbarHostState = snackbarHostState,
+		)
+		petsGraph(
+			navController = navController,
+			petListViewModel = petListViewModel,
+			coroutineScope = coroutineScope,
+		)
+	}
+}
+
+fun NavGraphBuilder.loginGraph(
+	navController: NavHostController,
+	context: Context,
+	snackbarHostState: SnackbarHostState,
+) {
+	composable<AppScreen.Login> {
+		LoginScreen(
+			context = context,
+			snackbarHostState = snackbarHostState,
+			onLoginSuccess = {
+				navController.navigate(route = AppScreen.PetList) {
+					popUpTo(route = AppScreen.Login) { inclusive = true }
+				}
+			},
+		)
+	}
+}
+
+private fun NavGraphBuilder.petsGraph(
+	navController: NavHostController,
+	petListViewModel: PetListViewModel,
+	coroutineScope: CoroutineScope,
+) {
+	composable<AppScreen.PetList> { navBackStackEntry ->
+		PetListScreen(
+			onPetClicked = { pet ->
+				navController.navigate(route = AppScreen.PetDetails(petId = pet.id))
+			},
+			onAddClicked = { navController.navigate(route = AppScreen.AddPet) },
+		)
+	}
+	composable<AppScreen.PetDetails> { navBackStackEntry ->
+		val details = navBackStackEntry.toRoute<AppScreen.PetDetails>()
+		val id = details.petId
+		val pet = petListViewModel
+			.cachedPets
+			.collectAsState(initial = emptyList())
+			.value
+			.find { it.id == id }
+		if (pet == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			PetDetailsScreen(
+				pet = pet,
+				onEditClicked = { navController.navigate(route = AppScreen.EditPet(petId = id)) },
+				onNavigateUp = { navController.navigateUp() },
+			)
+		}
+	}
+	composable<AppScreen.AddPet> {
+		AddPetScreen(
+			onDoneClicked = { pet ->
+				coroutineScope.launch { petListViewModel.petDao.insert(pet) }
+				navController.navigateUp()
+			},
+		)
+	}
+	composable<AppScreen.EditPet> { navBackStackEntry ->
+		val editPet = navBackStackEntry.toRoute<AppScreen.EditPet>()
+		val id = editPet.petId
+		val pet = petListViewModel
+			.cachedPets
+			.collectAsState(initial = emptyList())
+			.value
+			.find { it.id == id }
+		if (pet == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			EditPetScreen(
+				pet = pet,
+				onDoneClicked = { pet ->
+					coroutineScope.launch {
+						petListViewModel.petDao.update(pet)
+						navController.navigateUp()
 					}
 				},
-				modifier = modifier,
-			)
-		}
-		composable<AppScreen.PetList> { navBackStackEntry ->
-			PetListScreen(
-				onPetClicked = { pet ->
-					navController.navigate(route = AppScreen.PetDetails(petId = pet.id))
-				},
-				onAddClicked = { navController.navigate(route = AppScreen.AddPet) },
-			)
-		}
-		composable<AppScreen.PetDetails> { navBackStackEntry ->
-			val details = navBackStackEntry.toRoute<AppScreen.PetDetails>()
-			val id = details.petId
-			val pet = petListViewModel
-				.cachedPets
-				.collectAsState(initial = emptyList())
-				.value
-				.find { it.id == id }
-			if (pet == null) {
-				// This prevents the app from crashing
-				LoadingScreen()
-			} else {
-				PetDetailsScreen(
-					pet = pet,
-					onEditClicked = { navController.navigate(route = AppScreen.EditPet(petId = id)) },
-					onNavigateUp = { navController.navigateUp() },
-				)
-			}
-		}
-		composable<AppScreen.AddPet> {
-			AddPetScreen(
-				onDoneClicked = { pet ->
-					coroutineScope.launch { petListViewModel.petDao.insert(pet) }
-					navController.navigateUp()
+				onDeleteClicked = { pet ->
+					coroutineScope.launch {
+						petListViewModel.petDao.delete(pet)
+						navController.navigate(route = AppScreen.PetList)
+					}
 				},
 			)
-		}
-		composable<AppScreen.EditPet> { navBackStackEntry ->
-			val editPet = navBackStackEntry.toRoute<AppScreen.EditPet>()
-			val id = editPet.petId
-			val pet = petListViewModel
-				.cachedPets
-				.collectAsState(initial = emptyList())
-				.value
-				.find { it.id == id }
-			if (pet == null) {
-				// This prevents the app from crashing
-				LoadingScreen()
-			} else {
-				EditPetScreen(
-					pet = pet,
-					onDoneClicked = { pet ->
-						coroutineScope.launch {
-							petListViewModel.petDao.update(pet)
-							navController.navigateUp()
-						}
-					},
-					onDeleteClicked = { pet ->
-						coroutineScope.launch {
-							petListViewModel.petDao.delete(pet)
-							navController.navigate(route = AppScreen.PetList)
-						}
-					},
-				)
-			}
 		}
 	}
 }
