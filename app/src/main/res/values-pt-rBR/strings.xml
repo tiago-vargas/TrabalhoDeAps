@@ -20,4 +20,5 @@
 	<string name="form_field_weight">Peso</string>
 	<string name="form_field_is_sterilized">É Castrado(a)?</string>
 	<string name="pick_sterilization_status">Escolher Status de Castração</string>
+	<string name="filter">Filtrar</string>
 </resources>
