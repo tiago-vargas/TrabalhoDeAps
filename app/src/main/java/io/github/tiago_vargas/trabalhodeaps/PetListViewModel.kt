@@ -4,11 +4,14 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
-class PetListViewModel(val petDao: PetDao) : ViewModel() {
-	val cachedPets = petDao.getAll()
+class PetListViewModel(private val repository: PetRepository) : ViewModel() {
+	val cachedPets = repository.getAllPets()
 
 	companion object {
 		val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -16,8 +19,22 @@ class PetListViewModel(val petDao: PetDao) : ViewModel() {
 				val db = PetDatabase.getDatabase(
 					context = (this[APPLICATION_KEY] as Application).applicationContext,
 				)
-				PetListViewModel(petDao = db.petDao())
+				PetListViewModel(repository = LocalPetRepository(petDao = db.petDao()))
 			}
 		}
 	}
+
+	fun insertPet(pet: Pet) = viewModelScope.launch {
+		repository.insert(pet)
+	}
+
+	fun deletePet(pet: Pet) = viewModelScope.launch {
+		repository.delete(pet)
+	}
+
+	fun updatePet(pet: Pet) = viewModelScope.launch {
+		repository.update(pet)
+	}
+
+	fun getPet(id: Int) = cachedPets.map { list -> list.find { p -> p.id == id } }
 }

@@ -13,7 +13,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -23,8 +22,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
@@ -64,7 +61,6 @@ fun Content(
 	modifier: Modifier = Modifier,
 ) {
 	val navController: NavHostController = rememberNavController()
-	val coroutineScope = rememberCoroutineScope()
 	val petListViewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
 
 	NavHost(
@@ -77,11 +73,7 @@ fun Content(
 			context = context,
 			snackbarHostState = snackbarHostState,
 		)
-		petsGraph(
-			navController = navController,
-			petListViewModel = petListViewModel,
-			coroutineScope = coroutineScope,
-		)
+		petsGraph(navController = navController, petListViewModel = petListViewModel)
 	}
 }
 
@@ -106,7 +98,6 @@ fun NavGraphBuilder.loginGraph(
 private fun NavGraphBuilder.petsGraph(
 	navController: NavHostController,
 	petListViewModel: PetListViewModel,
-	coroutineScope: CoroutineScope,
 ) {
 	composable<AppScreen.PetList> { navBackStackEntry ->
 		PetListScreen(
@@ -120,10 +111,9 @@ private fun NavGraphBuilder.petsGraph(
 		val details = navBackStackEntry.toRoute<AppScreen.PetDetails>()
 		val id = details.petId
 		val pet = petListViewModel
-			.cachedPets
-			.collectAsState(initial = emptyList())
+			.getPet(id = id)
+			.collectAsState(initial = null)
 			.value
-			.find { it.id == id }
 		if (pet == null) {
 			// This prevents the app from crashing
 			LoadingScreen()
@@ -138,7 +128,7 @@ private fun NavGraphBuilder.petsGraph(
 	composable<AppScreen.AddPet> {
 		AddPetScreen(
 			onDoneClicked = { pet ->
-				coroutineScope.launch { petListViewModel.petDao.insert(pet) }
+				petListViewModel.insertPet(pet)
 				navController.navigateUp()
 			},
 		)
@@ -147,10 +137,9 @@ private fun NavGraphBuilder.petsGraph(
 		val editPet = navBackStackEntry.toRoute<AppScreen.EditPet>()
 		val id = editPet.petId
 		val pet = petListViewModel
-			.cachedPets
-			.collectAsState(initial = emptyList())
+			.getPet(id = id)
+			.collectAsState(initial = null)
 			.value
-			.find { it.id == id }
 		if (pet == null) {
 			// This prevents the app from crashing
 			LoadingScreen()
@@ -158,16 +147,12 @@ private fun NavGraphBuilder.petsGraph(
 			EditPetScreen(
 				pet = pet,
 				onDoneClicked = { pet ->
-					coroutineScope.launch {
-						petListViewModel.petDao.update(pet)
-						navController.navigateUp()
-					}
+					petListViewModel.updatePet(pet)
+					navController.navigateUp()
 				},
 				onDeleteClicked = { pet ->
-					coroutineScope.launch {
-						petListViewModel.petDao.delete(pet)
-						navController.navigate(route = AppScreen.PetList)
-					}
+					petListViewModel.deletePet(pet)
+					navController.navigate(route = AppScreen.PetList)
 				},
 			)
 		}
