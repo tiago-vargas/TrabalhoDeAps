@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import io.github.tiago_vargas.trabalhodeaps.ui.LoadingScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.login.LoginScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.AddPetScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.EditPetScreen
