@@ -19,4 +19,5 @@
 	<string name="form_field_weight">Weight</string>
 	<string name="form_field_is_sterilized">Is Sterilized?</string>
 	<string name="pick_sterilization_status">Pick Sterilization Status</string>
+	<string name="filter">Filter</string>
 </resources>

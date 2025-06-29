@@ -10,12 +10,30 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tiago_vargas.trabalhodeaps.data.LocalPetRepository
 import io.github.tiago_vargas.trabalhodeaps.data.PetDatabase
 import io.github.tiago_vargas.trabalhodeaps.data.PetRepository
+import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
+import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PetListViewModel(private val repository: PetRepository) : ViewModel() {
+	private val _filter = MutableStateFlow(PetFilter())
+	val filter = _filter.asStateFlow()
 	val cachedPets = repository.getAllPets()
+	val filteredPets = combine(cachedPets, filter) { pets, filter ->
+		pets.filter { pet ->
+			(filter.species.isEmpty() || pet.species in filter.species)
+					&& (filter.gender.isEmpty() || pet.gender in filter.gender)
+					&& (filter.wasSterilized.isEmpty() || pet.wasSterilized in filter.wasSterilized)
+		}
+	}
+	.stateIn(viewModelScope, started = SharingStarted.Lazily, initialValue = emptyList())
 
 	companion object {
 		val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -41,4 +59,19 @@ class PetListViewModel(private val repository: PetRepository) : ViewModel() {
 	}
 
 	fun getPet(id: Int) = cachedPets.map { list -> list.find { p -> p.id == id } }
+
+	private fun <T> Set<T>.toggle(value: T): Set<T> =
+		if (contains(value)) this - value else this + value
+
+	fun toggleSpecies(species: Species) {
+		_filter.update { it.copy(species = it.species.toggle(species)) }
+	}
+
+	fun toggleGender(gender: Gender) {
+		_filter.update { it.copy(gender = it.gender.toggle(gender)) }
+	}
+
+	fun toggleSterilized(value: Boolean) {
+		_filter.update { it.copy(wasSterilized = it.wasSterilized.toggle(value)) }
+	}
 }

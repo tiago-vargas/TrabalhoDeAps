@@ -17,6 +17,7 @@ data class Pet(
 
 enum class Species {
 	Cat,
+	Dog,
 }
 
 enum class Gender {
