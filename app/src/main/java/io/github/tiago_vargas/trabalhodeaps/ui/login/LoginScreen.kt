@@ -1,4 +1,4 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.ui.login
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +19,7 @@ import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.callback.Callback
 import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
+import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import kotlinx.coroutines.launch
 
