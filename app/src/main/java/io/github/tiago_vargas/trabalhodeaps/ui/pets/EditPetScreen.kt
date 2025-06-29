@@ -1,5 +1,6 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.ui.pets
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,39 +19,52 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.tiago_vargas.trabalhodeaps.R
+import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
-	val (pet, setPet) = remember { mutableStateOf(Pet(name = "", species = Species.Cat)) }
+fun EditPetScreen(
+	pet: Pet,
+	onDoneClicked: (Pet) -> Unit,
+	onDeleteClicked: (Pet) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val (sandboxPet, setSandboxPet) = remember { mutableStateOf(pet.copy()) }
 	val scrollState = rememberScrollState()
 
 	Scaffold(
 		modifier = modifier.fillMaxSize(),
-		topBar = { TopBar() },
+		topBar = {
+			TopAppBar(
+				title = { Text(stringResource(R.string.edit_pet)) },
+			)
+		},
 		bottomBar = {
-			BottomBar(onDoneClicked = { onDoneClicked(pet) })
+			BottomBar(onDoneClicked = { onDoneClicked(sandboxPet) })
 		},
 	) { innerPadding ->
-		PetForm(
-			pet = pet,
-			onPetChange = setPet,
+		Column(
 			modifier = modifier
 				.fillMaxWidth()
 				.verticalScroll(scrollState)
 				.padding(innerPadding),
-		)
+		) {
+			PetForm(
+				pet = sandboxPet,
+				onPetChange = setSandboxPet,
+				modifier = modifier
+					.fillMaxWidth()
+					.padding(innerPadding),
+			)
+			Button(onClick = { onDeleteClicked(sandboxPet) }) {
+				Text("Delete")  // TODO! Extract
+			}
+		}
 	}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar() {
-	TopAppBar(
-		title = { Text(stringResource(R.string.add_pet)) },
-	)
 }
 
 @Composable
@@ -60,7 +74,7 @@ private fun BottomBar(onDoneClicked: () -> Unit, modifier: Modifier = Modifier) 
 			Button(onClick = { /* TODO! */ }) {
 				Text("Cancel")
 			}
-			Spacer(Modifier.weight(1f))
+			Spacer(Modifier.weight(1.0f))
 			Button(onClick = onDoneClicked) {
 				Text("Done")
 			}
@@ -71,8 +85,16 @@ private fun BottomBar(onDoneClicked: () -> Unit, modifier: Modifier = Modifier) 
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AddPetScreenPreview() {
+fun EditPetScreenPreview() {
+	val pet = Pet(
+		name = "Cashew",
+		species = Species.Cat,
+		birthDate = 1_700_000_000_000L,
+		weight = 4.5,
+		gender = Gender.Male,
+		wasSterilized = false,
+	)
 	TrabalhoDeApsTheme {
-		AddPetScreen(onDoneClicked = { pet -> })
+		EditPetScreen(pet, onDoneClicked = { pet -> }, onDeleteClicked = { pet -> })
 	}
 }

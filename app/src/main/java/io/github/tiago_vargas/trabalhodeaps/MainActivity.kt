@@ -22,6 +22,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import io.github.tiago_vargas.trabalhodeaps.ui.login.LoginScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.AddPetScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.EditPetScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.PetDetailsScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListViewModel
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import kotlinx.serialization.Serializable
 

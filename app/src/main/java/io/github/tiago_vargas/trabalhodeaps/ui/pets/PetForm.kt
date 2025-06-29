@@ -1,4 +1,4 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.ui.pets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species

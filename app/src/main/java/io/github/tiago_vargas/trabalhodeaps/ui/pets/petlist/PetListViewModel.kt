@@ -1,4 +1,4 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
