@@ -152,7 +152,7 @@ private fun NavGraphBuilder.petsGraph(
 				},
 				onDeleteClicked = { pet ->
 					petListViewModel.deletePet(pet)
-					navController.navigate(route = AppScreen.PetList)
+					navController.popBackStack(route = AppScreen.PetList, inclusive = false)
 				},
 			)
 		}
