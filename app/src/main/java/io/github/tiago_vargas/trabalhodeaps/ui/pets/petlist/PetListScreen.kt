@@ -55,11 +55,14 @@ fun PetListScreen(
 			)
 		},
 	) { innerPadding ->
-		val pets = viewModel.cachedPets.collectAsState(initial = emptyList()).value
+		val pets = viewModel.filteredPets.collectAsState(initial = emptyList()).value
 		LazyColumn(modifier = Modifier.padding(innerPadding)) {
 			item {
 				if (shouldShowFilterSelector.value) {
 					FilterSelector(
+						onSpeciesToggle = viewModel::toggleSpecies,
+						onGenderToggle = viewModel::toggleGender,
+						onSterilizedToggle = viewModel::toggleSterilized,
 						modifier = Modifier.padding(12.dp)
 					)
 				}
@@ -111,25 +114,38 @@ fun PetRow(pet: Pet, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FilterSelector(modifier: Modifier = Modifier) {
+fun FilterSelector(
+	onSpeciesToggle: (Species) -> Unit,
+	onGenderToggle: (Gender) -> Unit,
+	onSterilizedToggle: (Boolean) -> Unit,
+	modifier: Modifier = Modifier,
+) {
 	Column(modifier = modifier) {
 		FilterSection(
 			options = Species.entries,
+			onOptionSelected = onSpeciesToggle,
 			header = stringResource(R.string.form_field_species),
 		)
 		FilterSection(
 			options = Gender.entries,
+			onOptionSelected = onGenderToggle,
 			header = stringResource(R.string.form_field_gender),
 		)
 		FilterSection(
 			options = listOf(true, false),
+			onOptionSelected = onSterilizedToggle,
 			header = stringResource(R.string.form_field_is_sterilized),
 		)
 	}
 }
 
 @Composable
-fun <T> FilterSection(options: Iterable<T>, header: String, modifier: Modifier = Modifier) {
+fun <T> FilterSection(
+	options: Iterable<T>,
+	onOptionSelected: (T) -> Unit,
+	header: String,
+	modifier: Modifier = Modifier,
+) {
 	Column(modifier = modifier) {
 		Text(header, style = MaterialTheme.typography.titleMedium)
 		Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -137,7 +153,10 @@ fun <T> FilterSection(options: Iterable<T>, header: String, modifier: Modifier =
 				val selected = remember { mutableStateOf(false) }
 				FilterChipWithIcon(
 					selected = selected.value,
-					onClick = { selected.value = !selected.value },
+					onClick = {
+						selected.value = !selected.value
+						onOptionSelected(option)
+					},
 					label = option.toString(),
 				)
 			}
@@ -190,5 +209,9 @@ fun PetListScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun FilterSelectorPreview() {
-	FilterSelector()
+	FilterSelector(
+		onSpeciesToggle = {},
+		onGenderToggle = {},
+		onSterilizedToggle = {},
+	)
 }
