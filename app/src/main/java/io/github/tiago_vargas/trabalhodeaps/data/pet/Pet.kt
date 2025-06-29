@@ -1,4 +1,4 @@
-package io.github.tiago_vargas.trabalhodeaps
+package io.github.tiago_vargas.trabalhodeaps.data.pet
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

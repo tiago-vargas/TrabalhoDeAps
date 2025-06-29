@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
+import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @Composable
