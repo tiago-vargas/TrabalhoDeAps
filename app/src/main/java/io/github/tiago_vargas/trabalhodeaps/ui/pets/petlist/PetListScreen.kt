@@ -36,6 +36,7 @@ import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.Dashboard
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @Composable
@@ -76,6 +77,10 @@ fun PetListScreen(
 						.padding(12.dp)
 						.fillMaxWidth(),
 				)
+			}
+
+			item {
+				Dashboard(petListViewModel = viewModel)
 			}
 		}
 	}
