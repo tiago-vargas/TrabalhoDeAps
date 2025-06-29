@@ -13,16 +13,23 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.auth0.android.Auth0
-import com.auth0.android.authentication.AuthenticationException
-import com.auth0.android.callback.Callback
-import com.auth0.android.provider.WebAuthProvider
-import com.auth0.android.result.Credentials
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import io.github.tiago_vargas.trabalhodeaps.ui.LoadingScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.login.LoginScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.AddPetScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.EditPetScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.PetDetailsScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListViewModel
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
-import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App(context: Context) {
-	val viewModel = viewModel<LoginViewModel>()
 	val snackbarHostState = remember { SnackbarHostState() }
 
 	TrabalhoDeApsTheme {
@@ -46,7 +52,6 @@ fun App(context: Context) {
 		) { innerPadding ->
 			Content(
 				context = context,
-				viewModel = viewModel,
 				modifier = Modifier
 					.fillMaxSize()
 					.padding(innerPadding),
@@ -59,43 +64,121 @@ fun App(context: Context) {
 @Composable
 fun Content(
 	context: Context,
-	viewModel: LoginViewModel,
+	snackbarHostState: SnackbarHostState,
 	modifier: Modifier = Modifier,
+) {
+	val navController: NavHostController = rememberNavController()
+	val petListViewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
+
+	NavHost(
+		navController = navController,
+		startDestination = AppScreen.Login,
+		modifier = modifier,
+	) {
+		loginGraph(
+			navController = navController,
+			context = context,
+			snackbarHostState = snackbarHostState,
+		)
+		petsGraph(navController = navController, petListViewModel = petListViewModel)
+	}
+}
+
+fun NavGraphBuilder.loginGraph(
+	navController: NavHostController,
+	context: Context,
 	snackbarHostState: SnackbarHostState,
 ) {
-//	val isLoggedIn = viewModel.isLoggedIn.collectAsState()
-//	val coroutineScope = rememberCoroutineScope()
-//
-//	val account = Auth0.getInstance(
-//		clientId = context.getString(R.string.com_auth0_client_id),
-//		domain = context.getString(R.string.com_auth0_domain),
-//	)
-//	val attemptLogin = {
-//		val callback = object : Callback<Credentials, AuthenticationException> {
-//			override fun onFailure(error: AuthenticationException) {
-//				coroutineScope.launch {
-//					snackbarHostState.showSnackbar(
-//						message = context.getString(R.string.an_error_occurred),
-//					)
-//				}
-//			}
-//
-//			override fun onSuccess(result: Credentials) {
-//				viewModel.setIsLoggedIn(true)
-//			}
-//		}
-//		WebAuthProvider
-//			.login(account)
-//			.withScheme(context.getString(R.string.com_auth0_scheme))
-//			.start(context, callback)
-//	}
+	composable<AppScreen.Login> {
+		LoginScreen(
+			context = context,
+			snackbarHostState = snackbarHostState,
+			onLoginSuccess = {
+				navController.navigate(route = AppScreen.PetList) {
+					popUpTo(route = AppScreen.Login) { inclusive = true }
+				}
+			},
+		)
+	}
+}
 
-//	if (isLoggedIn.value) {
-//		PetListScreen(onPetClicked = { pet -> }, onAddClicked = {}, modifier = modifier)
-//		LogoutScreen(onLogoutClicked = attemptLogout, modifier = modifier)
-//		PetListScreen(onPetClicked = { pet -> }, onAddClicked = {}, modifier = modifier)
-		PrePetListScreen(modifier = modifier)
-//	} else {
-//		LoginScreen(onLoginClicked = attemptLogin, modifier = modifier)
-//	}
+private fun NavGraphBuilder.petsGraph(
+	navController: NavHostController,
+	petListViewModel: PetListViewModel,
+) {
+	composable<AppScreen.PetList> { navBackStackEntry ->
+		PetListScreen(
+			onPetClicked = { pet ->
+				navController.navigate(route = AppScreen.PetDetails(petId = pet.id))
+			},
+			onAddClicked = { navController.navigate(route = AppScreen.AddPet) },
+		)
+	}
+	composable<AppScreen.PetDetails> { navBackStackEntry ->
+		val details = navBackStackEntry.toRoute<AppScreen.PetDetails>()
+		val id = details.petId
+		val pet = petListViewModel
+			.getPet(id = id)
+			.collectAsState(initial = null)
+			.value
+		if (pet == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			PetDetailsScreen(
+				pet = pet,
+				onEditClicked = { navController.navigate(route = AppScreen.EditPet(petId = id)) },
+				onNavigateUp = { navController.navigateUp() },
+			)
+		}
+	}
+	composable<AppScreen.AddPet> {
+		AddPetScreen(
+			onDoneClicked = { pet ->
+				petListViewModel.insertPet(pet)
+				navController.navigateUp()
+			},
+		)
+	}
+	composable<AppScreen.EditPet> { navBackStackEntry ->
+		val editPet = navBackStackEntry.toRoute<AppScreen.EditPet>()
+		val id = editPet.petId
+		val pet = petListViewModel
+			.getPet(id = id)
+			.collectAsState(initial = null)
+			.value
+		if (pet == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			EditPetScreen(
+				pet = pet,
+				onDoneClicked = { pet ->
+					petListViewModel.updatePet(pet)
+					navController.navigateUp()
+				},
+				onDeleteClicked = { pet ->
+					petListViewModel.deletePet(pet)
+					navController.popBackStack(route = AppScreen.PetList, inclusive = false)
+				},
+			)
+		}
+	}
+}
+
+private sealed class AppScreen {
+	@Serializable
+	data object Login : AppScreen()
+
+	@Serializable
+	data object PetList : AppScreen()
+
+	@Serializable
+	data class PetDetails(val petId: Int) : AppScreen()
+
+	@Serializable
+	data object AddPet : AppScreen()
+
+	@Serializable
+	data class EditPet(val petId: Int) : AppScreen()
 }

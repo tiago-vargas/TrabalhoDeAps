@@ -5,4 +5,18 @@
 	<string name="pet_details">Pet Details</string>
 	<string name="edit_pet">Edit Pet</string>
 	<string name="pet_list">Pets</string>
+	<string name="okay">Okay</string>
+	<string name="cancel">Cancel</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	<string name="form_field_name">Name</string>
+	<string name="form_field_species">Species</string>
+	<string name="pick_species">Pick Species</string>
+	<string name="form_field_birth_date">Birth Date</string>
+	<string name="pick_date">Pick Date</string>
+	<string name="form_field_gender">Gender</string>
+	<string name="pick_gender">Pick Gender</string>
+	<string name="form_field_weight">Weight</string>
+	<string name="form_field_is_sterilized">Is Sterilized?</string>
+	<string name="pick_sterilization_status">Pick Sterilization Status</string>
 </resources>
