@@ -26,4 +26,7 @@
 	<string name="vaccine_list_description">Lista de Vacinas</string>
 	<string name="form_field_description">Descrição</string>
 	<string name="add_vaccine">Adicionar Vacina</string>
+	<string name="vaccine_details">Detalhes da Vacina</string>
+	<string name="edit_vaccine">Editar Vacina</string>
+	<string name="form_field_shot_date">Data da Dose</string>
 </resources>

@@ -42,6 +42,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListViewModel
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.AddVaccineScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
 import kotlinx.serialization.Serializable
@@ -196,9 +197,29 @@ private fun NavGraphBuilder.vaccinesGraph(
 ) {
 	composable<AppScreen.VaccineList> { navBackStackEntry ->
 		VaccineListScreen(
-			onVaccineClicked = { /* TODO! */ },
+			onVaccineClicked = { vaccine ->
+				navController.navigate(route = AppScreen.VaccineDetails(vaccineId = vaccine.id))
+			},
 			onAddClicked = { navController.navigate(route = AppScreen.AddVaccine) },
 		)
+	}
+	composable<AppScreen.VaccineDetails> { navBackStackEntry ->
+		val details = navBackStackEntry.toRoute<AppScreen.VaccineDetails>()
+		val id = details.vaccineId
+		val vaccine = vaccineListViewModel
+			.getVaccine(id = id)
+			.collectAsState(initial = null)
+			.value
+		if (vaccine == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			VaccineDetailsScreen(
+				vaccine = vaccine,
+				onEditClicked = { /* TODO! */ },
+				onNavigateUp = { navController.navigateUp() },
+			)
+		}
 	}
 	composable<AppScreen.AddVaccine> {
 		AddVaccineScreen(
@@ -259,6 +280,9 @@ private sealed class AppScreen {
 
 	@Serializable
 	data object AddVaccine : AppScreen()
+
+	@Serializable
+	data class VaccineDetails(val vaccineId: Int) : AppScreen()
 }
 
 private enum class BottomBarItem(
