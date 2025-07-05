@@ -42,6 +42,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListViewModel
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.AddVaccineScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.EditVaccineScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
@@ -216,7 +217,7 @@ private fun NavGraphBuilder.vaccinesGraph(
 		} else {
 			VaccineDetailsScreen(
 				vaccine = vaccine,
-				onEditClicked = { /* TODO! */ },
+				onEditClicked = { navController.navigate(route = AppScreen.EditVaccine(vaccineId = id)) },
 				onNavigateUp = { navController.navigateUp() },
 			)
 		}
@@ -228,6 +229,30 @@ private fun NavGraphBuilder.vaccinesGraph(
 				navController.navigateUp()
 			},
 		)
+	}
+	composable<AppScreen.EditVaccine> { navBackStackEntry ->
+		val editVaccine = navBackStackEntry.toRoute<AppScreen.EditVaccine>()
+		val id = editVaccine.vaccineId
+		val vaccine = vaccineListViewModel
+			.getVaccine(id = id)
+			.collectAsState(initial = null)
+			.value
+		if (vaccine == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			EditVaccineScreen(
+				vaccine = vaccine,
+				onDoneClicked = { vaccine ->
+					vaccineListViewModel.updateVaccine(vaccine)
+					navController.navigateUp()
+				},
+				onDeleteClicked = { vaccine ->
+					vaccineListViewModel.deleteVaccine(vaccine)
+					navController.popBackStack(route = AppScreen.VaccineList, inclusive = false)
+				},
+			)
+		}
 	}
 }
 
@@ -283,6 +308,9 @@ private sealed class AppScreen {
 
 	@Serializable
 	data class VaccineDetails(val vaccineId: Int) : AppScreen()
+
+	@Serializable
+	data class EditVaccine(val vaccineId: Int) : AppScreen()
 }
 
 private enum class BottomBarItem(
