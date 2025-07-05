@@ -41,6 +41,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.pets.PetDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListViewModel
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.AddVaccineScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
 import kotlinx.serialization.Serializable
@@ -196,7 +197,15 @@ private fun NavGraphBuilder.vaccinesGraph(
 	composable<AppScreen.VaccineList> { navBackStackEntry ->
 		VaccineListScreen(
 			onVaccineClicked = { /* TODO! */ },
-			onAddClicked = { /* TODO! */ },
+			onAddClicked = { navController.navigate(route = AppScreen.AddVaccine) },
+		)
+	}
+	composable<AppScreen.AddVaccine> {
+		AddVaccineScreen(
+			onDoneClicked = { vaccine ->
+				vaccineListViewModel.insertVaccine(vaccine)
+				navController.navigateUp()
+			},
 		)
 	}
 }
@@ -247,6 +256,9 @@ private sealed class AppScreen {
 
 	@Serializable
 	data object VaccineList : AppScreen()
+
+	@Serializable
+	data object AddVaccine : AppScreen()
 }
 
 private enum class BottomBarItem(

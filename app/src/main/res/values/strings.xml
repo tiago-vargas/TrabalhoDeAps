@@ -23,4 +23,6 @@
 	<string name="vaccine_list">Vaccines</string>
 	<string name="pet_list_description">Pet List</string>
 	<string name="vaccine_list_description">Vaccine List</string>
+	<string name="form_field_description">Description</string>
+	<string name="add_vaccine">Add Vaccine</string>
 </resources>
