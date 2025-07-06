@@ -1,8 +1,6 @@
 package io.github.tiago_vargas.trabalhodeaps.ui.pets
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
+import io.github.tiago_vargas.trabalhodeaps.ui.PropertyRow
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
 @Composable
@@ -123,17 +122,6 @@ fun Banner(petName: String, modifier: Modifier = Modifier) {
 			fontWeight = FontWeight.ExtraBold,
 			style = MaterialTheme.typography.headlineLarge,
 		)
-	}
-}
-
-@Composable
-fun PropertyRow(key: String, value: String, modifier: Modifier = Modifier) {
-	Row(
-		modifier = modifier,
-		horizontalArrangement = Arrangement.SpaceBetween,
-	) {
-		Text(key)
-		Text(value)
 	}
 }
 
