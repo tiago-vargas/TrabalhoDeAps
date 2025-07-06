@@ -21,4 +21,12 @@
 	<string name="form_field_is_sterilized">É Castrado(a)?</string>
 	<string name="pick_sterilization_status">Escolher Status de Castração</string>
 	<string name="filter">Filtrar</string>
+	<string name="vaccine_list">Vacinas</string>
+	<string name="pet_list_description">Lista de Pets</string>
+	<string name="vaccine_list_description">Lista de Vacinas</string>
+	<string name="form_field_description">Descrição</string>
+	<string name="add_vaccine">Adicionar Vacina</string>
+	<string name="vaccine_details">Detalhes da Vacina</string>
+	<string name="edit_vaccine">Editar Vacina</string>
+	<string name="form_field_shot_date">Data da Dose</string>
 </resources>

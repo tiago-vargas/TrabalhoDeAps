@@ -20,4 +20,12 @@
 	<string name="form_field_is_sterilized">Is Sterilized?</string>
 	<string name="pick_sterilization_status">Pick Sterilization Status</string>
 	<string name="filter">Filter</string>
+	<string name="vaccine_list">Vaccines</string>
+	<string name="pet_list_description">Pet List</string>
+	<string name="vaccine_list_description">Vaccine List</string>
+	<string name="form_field_description">Description</string>
+	<string name="add_vaccine">Add Vaccine</string>
+	<string name="vaccine_details">Vaccine Details</string>
+	<string name="edit_vaccine">Edit Vaccine</string>
+	<string name="form_field_shot_date">Shot Date</string>
 </resources>

@@ -6,10 +6,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.PetDao
+import io.github.tiago_vargas.trabalhodeaps.data.vaccine.Vaccine
+import io.github.tiago_vargas.trabalhodeaps.data.vaccine.VaccineDao
 
-@Database(entities = [Pet::class], version = 1, exportSchema = false)
+@Database(
+	entities = [Pet::class, Vaccine::class],
+	version = 2,
+	exportSchema = false,
+)
 abstract class PetDatabase : RoomDatabase() {
 	abstract fun petDao(): PetDao
+	abstract fun vaccineDao(): VaccineDao
 
 	companion object {
 		@Volatile

@@ -5,15 +5,27 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -29,6 +41,11 @@ import io.github.tiago_vargas.trabalhodeaps.ui.pets.PetDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.petlist.PetListViewModel
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.AddVaccineScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.EditVaccineScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
@@ -69,18 +86,27 @@ fun Content(
 ) {
 	val navController: NavHostController = rememberNavController()
 	val petListViewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
+	val vaccineListViewModel =
+		viewModel<VaccineListViewModel>(factory = VaccineListViewModel.Factory)
 
-	NavHost(
-		navController = navController,
-		startDestination = AppScreen.Login,
+	Scaffold(
 		modifier = modifier,
-	) {
-		loginGraph(
+		bottomBar = { BottomBar(navController = navController) },
+	) { innerPadding ->
+		NavHost(
 			navController = navController,
-			context = context,
-			snackbarHostState = snackbarHostState,
-		)
-		petsGraph(navController = navController, petListViewModel = petListViewModel)
+			modifier = Modifier.padding(innerPadding),
+		) {
+			loginGraph(
+				navController = navController,
+				context = context,
+				snackbarHostState = snackbarHostState,
+			)
+			petsGraph(navController = navController, petListViewModel = petListViewModel)
+			vaccinesGraph(
+				navController = navController, vaccineListViewModel = vaccineListViewModel
+			)
+		}
 	}
 }
 
@@ -166,6 +192,98 @@ private fun NavGraphBuilder.petsGraph(
 	}
 }
 
+private fun NavGraphBuilder.vaccinesGraph(
+	navController: NavHostController,
+	vaccineListViewModel: VaccineListViewModel,
+) {
+	composable<AppScreen.VaccineList> { navBackStackEntry ->
+		VaccineListScreen(
+			onVaccineClicked = { vaccine ->
+				navController.navigate(route = AppScreen.VaccineDetails(vaccineId = vaccine.id))
+			},
+			onAddClicked = { navController.navigate(route = AppScreen.AddVaccine) },
+		)
+	}
+	composable<AppScreen.VaccineDetails> { navBackStackEntry ->
+		val details = navBackStackEntry.toRoute<AppScreen.VaccineDetails>()
+		val id = details.vaccineId
+		val vaccine = vaccineListViewModel
+			.getVaccine(id = id)
+			.collectAsState(initial = null)
+			.value
+		if (vaccine == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			VaccineDetailsScreen(
+				vaccine = vaccine,
+				onEditClicked = { navController.navigate(route = AppScreen.EditVaccine(vaccineId = id)) },
+				onNavigateUp = { navController.navigateUp() },
+			)
+		}
+	}
+	composable<AppScreen.AddVaccine> {
+		AddVaccineScreen(
+			onDoneClicked = { vaccine ->
+				vaccineListViewModel.insertVaccine(vaccine)
+				navController.navigateUp()
+			},
+		)
+	}
+	composable<AppScreen.EditVaccine> { navBackStackEntry ->
+		val editVaccine = navBackStackEntry.toRoute<AppScreen.EditVaccine>()
+		val id = editVaccine.vaccineId
+		val vaccine = vaccineListViewModel
+			.getVaccine(id = id)
+			.collectAsState(initial = null)
+			.value
+		if (vaccine == null) {
+			// This prevents the app from crashing
+			LoadingScreen()
+		} else {
+			EditVaccineScreen(
+				vaccine = vaccine,
+				onDoneClicked = { vaccine ->
+					vaccineListViewModel.updateVaccine(vaccine)
+					navController.navigateUp()
+				},
+				onDeleteClicked = { vaccine ->
+					vaccineListViewModel.deleteVaccine(vaccine)
+					navController.popBackStack(route = AppScreen.VaccineList, inclusive = false)
+				},
+			)
+		}
+	}
+}
+
+@Composable
+private fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
+	val selectedItem = rememberSaveable { mutableStateOf(BottomBarItem.PET_LIST) }
+
+	NavigationBar(modifier = modifier, windowInsets = NavigationBarDefaults.windowInsets) {
+		for (item in BottomBarItem.entries) {
+			NavigationBarItem(
+				selected = selectedItem.value == item,
+				onClick = {
+					val route = when (item) {
+						BottomBarItem.PET_LIST -> AppScreen.PetList
+						BottomBarItem.VACCINE_LIST -> AppScreen.VaccineList
+					}
+					navController.navigate(route = route)
+					selectedItem.value = item
+				},
+				icon = {
+					Icon(
+						item.icon,
+						contentDescription = stringResource(item.contentDescriptionResourceId),
+					)
+				},
+				label = { Text(stringResource(item.labelResourceId)) },
+			)
+		}
+	}
+}
+
 private sealed class AppScreen {
 	@Serializable
 	data object Login : AppScreen()
@@ -181,4 +299,33 @@ private sealed class AppScreen {
 
 	@Serializable
 	data class EditPet(val petId: Int) : AppScreen()
+
+	@Serializable
+	data object VaccineList : AppScreen()
+
+	@Serializable
+	data object AddVaccine : AppScreen()
+
+	@Serializable
+	data class VaccineDetails(val vaccineId: Int) : AppScreen()
+
+	@Serializable
+	data class EditVaccine(val vaccineId: Int) : AppScreen()
+}
+
+private enum class BottomBarItem(
+	@StringRes val labelResourceId: Int,
+	val icon: ImageVector,
+	@StringRes val contentDescriptionResourceId: Int,
+) {
+	PET_LIST(
+		labelResourceId = R.string.pet_list,
+		icon = Icons.Default.Person,
+		contentDescriptionResourceId = R.string.pet_list_description,
+	),
+	VACCINE_LIST(
+		labelResourceId = R.string.vaccine_list,
+		icon = Icons.Default.Person,
+		contentDescriptionResourceId = R.string.vaccine_list_description,
+	),
 }
