@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import io.github.tiago_vargas.trabalhodeaps.ui.ChatScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.LoadingScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.login.LoginScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.AddPetScreen
@@ -45,6 +46,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.EditVaccineScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
@@ -105,6 +107,7 @@ fun Content(
 		vaccinesGraph(
 			navController = navController, vaccineListViewModel = vaccineListViewModel
 		)
+		chatGraph()
 	}
 }
 
@@ -254,6 +257,10 @@ private fun NavGraphBuilder.vaccinesGraph(
 	}
 }
 
+private fun NavGraphBuilder.chatGraph() {
+	composable<AppScreen.Chat> { ChatScreen() }
+}
+
 @Composable
 private fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
 	val selectedItem = rememberSaveable { mutableStateOf(BottomBarItem.PET_LIST) }
@@ -266,6 +273,7 @@ private fun BottomBar(navController: NavHostController, modifier: Modifier = Mod
 					val route = when (item) {
 						BottomBarItem.PET_LIST -> AppScreen.PetList
 						BottomBarItem.VACCINE_LIST -> AppScreen.VaccineList
+						BottomBarItem.CHAT -> AppScreen.Chat
 					}
 					navController.navigate(route = route)
 					selectedItem.value = item
@@ -309,6 +317,9 @@ private sealed class AppScreen {
 
 	@Serializable
 	data class EditVaccine(val vaccineId: Int) : AppScreen()
+
+	@Serializable
+	data object Chat : AppScreen()
 }
 
 private enum class BottomBarItem(
@@ -325,5 +336,10 @@ private enum class BottomBarItem(
 		labelResourceId = R.string.vaccine_list,
 		iconResourceId = R.drawable.vaccines_24px,
 		contentDescriptionResourceId = R.string.vaccine_list_description,
+	),
+	CHAT(
+		labelResourceId = R.string.chat,
+		iconResourceId = R.drawable.chat_24px,
+		contentDescriptionResourceId = R.string.chat_description,
 	),
 }
