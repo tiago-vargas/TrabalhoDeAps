@@ -60,18 +60,21 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(context: Context) {
 	val snackbarHostState = remember { SnackbarHostState() }
+	val navController: NavHostController = rememberNavController()
 
 	TrabalhoDeApsTheme {
 		Scaffold(
 			modifier = Modifier.fillMaxSize(),
+			bottomBar = { BottomBar(navController = navController) },
 			snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
 		) { innerPadding ->
 			Content(
 				context = context,
+				navController = navController,
+				snackbarHostState = snackbarHostState,
 				modifier = Modifier
 					.fillMaxSize()
 					.padding(innerPadding),
-				snackbarHostState = snackbarHostState,
 			)
 		}
 	}
@@ -80,32 +83,28 @@ fun App(context: Context) {
 @Composable
 fun Content(
 	context: Context,
+	navController: NavHostController,
 	snackbarHostState: SnackbarHostState,
 	modifier: Modifier = Modifier,
 ) {
-	val navController: NavHostController = rememberNavController()
 	val petListViewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
 	val vaccineListViewModel =
 		viewModel<VaccineListViewModel>(factory = VaccineListViewModel.Factory)
 
-	Scaffold(
+	NavHost(
+		navController = navController,
+		startDestination = AppScreen.Login,
 		modifier = modifier,
-		bottomBar = { BottomBar(navController = navController) },
-	) { innerPadding ->
-		NavHost(
+	) {
+		loginGraph(
 			navController = navController,
-			modifier = Modifier.padding(innerPadding),
-		) {
-			loginGraph(
-				navController = navController,
-				context = context,
-				snackbarHostState = snackbarHostState,
-			)
-			petsGraph(navController = navController, petListViewModel = petListViewModel)
-			vaccinesGraph(
-				navController = navController, vaccineListViewModel = vaccineListViewModel
-			)
-		}
+			context = context,
+			snackbarHostState = snackbarHostState,
+		)
+		petsGraph(navController = navController, petListViewModel = petListViewModel)
+		vaccinesGraph(
+			navController = navController, vaccineListViewModel = vaccineListViewModel
+		)
 	}
 }
 
