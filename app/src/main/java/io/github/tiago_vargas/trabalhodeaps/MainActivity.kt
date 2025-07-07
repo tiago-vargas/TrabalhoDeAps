@@ -5,11 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -24,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -274,7 +273,7 @@ private fun BottomBar(navController: NavHostController, modifier: Modifier = Mod
 				},
 				icon = {
 					Icon(
-						item.icon,
+						painter = painterResource(id = item.iconResourceId),
 						contentDescription = stringResource(item.contentDescriptionResourceId),
 					)
 				},
@@ -315,17 +314,17 @@ private sealed class AppScreen {
 
 private enum class BottomBarItem(
 	@StringRes val labelResourceId: Int,
-	val icon: ImageVector,
+	@DrawableRes val iconResourceId: Int,
 	@StringRes val contentDescriptionResourceId: Int,
 ) {
 	PET_LIST(
 		labelResourceId = R.string.pet_list,
-		icon = Icons.Default.Person,
+		iconResourceId = R.drawable.pets_24px,
 		contentDescriptionResourceId = R.string.pet_list_description,
 	),
 	VACCINE_LIST(
 		labelResourceId = R.string.vaccine_list,
-		icon = Icons.Default.Person,
+		iconResourceId = R.drawable.vaccines_24px,
 		contentDescriptionResourceId = R.string.vaccine_list_description,
 	),
 }
