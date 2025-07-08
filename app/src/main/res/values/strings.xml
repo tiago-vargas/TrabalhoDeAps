@@ -28,4 +28,9 @@
 	<string name="vaccine_details">Vaccine Details</string>
 	<string name="edit_vaccine">Edit Vaccine</string>
 	<string name="form_field_shot_date">Shot Date</string>
+	<string name="chat">Chat</string>
+	<string name="chat_description">Chat with Gemini</string>
+	<string name="add_photo">Attach Image</string>
+	<string name="ask_something">Ask Something…</string>
+	<string name="send_prompt">Send prompt</string>
 </resources>

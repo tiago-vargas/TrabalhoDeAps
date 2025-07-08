@@ -48,7 +48,7 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+private fun TopBar() {
 	TopAppBar(
 		title = { Text(stringResource(R.string.add_pet)) },
 	)

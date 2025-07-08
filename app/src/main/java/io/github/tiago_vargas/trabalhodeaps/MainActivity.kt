@@ -5,11 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -24,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -33,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import io.github.tiago_vargas.trabalhodeaps.ui.ChatScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.LoadingScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.login.LoginScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.pets.AddPetScreen
@@ -46,6 +46,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.EditVaccineScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
@@ -61,18 +62,21 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(context: Context) {
 	val snackbarHostState = remember { SnackbarHostState() }
+	val navController: NavHostController = rememberNavController()
 
 	TrabalhoDeApsTheme {
 		Scaffold(
 			modifier = Modifier.fillMaxSize(),
+			bottomBar = { BottomBar(navController = navController) },
 			snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
 		) { innerPadding ->
 			Content(
 				context = context,
+				navController = navController,
+				snackbarHostState = snackbarHostState,
 				modifier = Modifier
 					.fillMaxSize()
 					.padding(innerPadding),
-				snackbarHostState = snackbarHostState,
 			)
 		}
 	}
@@ -81,32 +85,29 @@ fun App(context: Context) {
 @Composable
 fun Content(
 	context: Context,
+	navController: NavHostController,
 	snackbarHostState: SnackbarHostState,
 	modifier: Modifier = Modifier,
 ) {
-	val navController: NavHostController = rememberNavController()
 	val petListViewModel = viewModel<PetListViewModel>(factory = PetListViewModel.Factory)
 	val vaccineListViewModel =
 		viewModel<VaccineListViewModel>(factory = VaccineListViewModel.Factory)
 
-	Scaffold(
+	NavHost(
+		navController = navController,
+		startDestination = AppScreen.Login,
 		modifier = modifier,
-		bottomBar = { BottomBar(navController = navController) },
-	) { innerPadding ->
-		NavHost(
+	) {
+		loginGraph(
 			navController = navController,
-			modifier = Modifier.padding(innerPadding),
-		) {
-			loginGraph(
-				navController = navController,
-				context = context,
-				snackbarHostState = snackbarHostState,
-			)
-			petsGraph(navController = navController, petListViewModel = petListViewModel)
-			vaccinesGraph(
-				navController = navController, vaccineListViewModel = vaccineListViewModel
-			)
-		}
+			context = context,
+			snackbarHostState = snackbarHostState,
+		)
+		petsGraph(navController = navController, petListViewModel = petListViewModel)
+		vaccinesGraph(
+			navController = navController, vaccineListViewModel = vaccineListViewModel
+		)
+		chatGraph()
 	}
 }
 
@@ -256,6 +257,10 @@ private fun NavGraphBuilder.vaccinesGraph(
 	}
 }
 
+private fun NavGraphBuilder.chatGraph() {
+	composable<AppScreen.Chat> { ChatScreen() }
+}
+
 @Composable
 private fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
 	val selectedItem = rememberSaveable { mutableStateOf(BottomBarItem.PET_LIST) }
@@ -268,13 +273,14 @@ private fun BottomBar(navController: NavHostController, modifier: Modifier = Mod
 					val route = when (item) {
 						BottomBarItem.PET_LIST -> AppScreen.PetList
 						BottomBarItem.VACCINE_LIST -> AppScreen.VaccineList
+						BottomBarItem.CHAT -> AppScreen.Chat
 					}
 					navController.navigate(route = route)
 					selectedItem.value = item
 				},
 				icon = {
 					Icon(
-						item.icon,
+						painter = painterResource(id = item.iconResourceId),
 						contentDescription = stringResource(item.contentDescriptionResourceId),
 					)
 				},
@@ -311,21 +317,29 @@ private sealed class AppScreen {
 
 	@Serializable
 	data class EditVaccine(val vaccineId: Int) : AppScreen()
+
+	@Serializable
+	data object Chat : AppScreen()
 }
 
 private enum class BottomBarItem(
 	@StringRes val labelResourceId: Int,
-	val icon: ImageVector,
+	@DrawableRes val iconResourceId: Int,
 	@StringRes val contentDescriptionResourceId: Int,
 ) {
 	PET_LIST(
 		labelResourceId = R.string.pet_list,
-		icon = Icons.Default.Person,
+		iconResourceId = R.drawable.pets_24px,
 		contentDescriptionResourceId = R.string.pet_list_description,
 	),
 	VACCINE_LIST(
 		labelResourceId = R.string.vaccine_list,
-		icon = Icons.Default.Person,
+		iconResourceId = R.drawable.vaccines_24px,
 		contentDescriptionResourceId = R.string.vaccine_list_description,
+	),
+	CHAT(
+		labelResourceId = R.string.chat,
+		iconResourceId = R.drawable.chat_24px,
+		contentDescriptionResourceId = R.string.chat_description,
 	),
 }

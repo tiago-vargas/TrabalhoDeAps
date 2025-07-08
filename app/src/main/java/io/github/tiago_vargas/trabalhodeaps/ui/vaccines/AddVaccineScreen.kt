@@ -48,7 +48,7 @@ fun AddVaccineScreen(onDoneClicked: (Vaccine) -> Unit, modifier: Modifier = Modi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+private fun TopBar() {
 	TopAppBar(
 		title = { Text(stringResource(R.string.add_vaccine)) },
 	)
