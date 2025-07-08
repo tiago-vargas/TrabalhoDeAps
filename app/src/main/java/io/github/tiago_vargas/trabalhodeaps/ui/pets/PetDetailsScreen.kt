@@ -1,12 +1,18 @@
 package io.github.tiago_vargas.trabalhodeaps.ui.pets
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -33,6 +39,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
+import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
 import io.github.tiago_vargas.trabalhodeaps.ui.PropertyRow
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
@@ -40,6 +47,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 @Composable
 fun PetDetailsScreen(
 	pet: Pet,
+	photos: List<PetPhoto>,
 	onEditClicked: () -> Unit,
 	onNavigateUp: () -> Unit,
 	modifier: Modifier = Modifier,
@@ -80,6 +88,19 @@ fun PetDetailsScreen(
 					pet.wasSterilized.toString(),
 					modifier = Modifier.fillMaxWidth()
 				)
+
+				// Gallery Section
+				if (photos.isNotEmpty()) {
+					Text(
+						text = stringResource(R.string.photo_gallery),
+						style = MaterialTheme.typography.titleMedium,
+						modifier = Modifier.padding(vertical = 8.dp)
+					)
+					PhotoGallery(
+						photos = photos,
+						modifier = Modifier.fillMaxWidth()
+					)
+				}
 			}
 		}
 	}
@@ -149,12 +170,42 @@ fun Banner(petName: String, profilePictureUri: String?, modifier: Modifier = Mod
 	}
 }
 
+@Composable
+fun PhotoGallery(
+	photos: List<PetPhoto>,
+	modifier: Modifier = Modifier
+) {
+	val context = LocalContext.current
+
+	LazyRow(
+		modifier = modifier,
+		horizontalArrangement = Arrangement.spacedBy(8.dp)
+	) {
+		items(photos) { photo ->
+			AsyncImage(
+				model = ImageRequest.Builder(context)
+					.data(photo.uri)
+					.crossfade(true)
+					.build(),
+				contentDescription = stringResource(R.string.pet_photo),
+				contentScale = ContentScale.Crop,
+				modifier = Modifier
+					.width(120.dp)
+					.height(120.dp)
+					.clip(RoundedCornerShape(8.dp))
+					.background(MaterialTheme.colorScheme.surfaceVariant)
+			)
+		}
+	}
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PetDetailsScreenPreview() {
 	val pet = Pet(name = "Cashew", species = Species.Cat)
+	val photos = emptyList<PetPhoto>()
 
 	TrabalhoDeApsTheme {
-		PetDetailsScreen(pet = pet, onEditClicked = {}, onNavigateUp = {})
+		PetDetailsScreen(pet = pet, photos = photos, onEditClicked = {}, onNavigateUp = {})
 	}
 }

@@ -8,10 +8,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -43,6 +53,7 @@ import coil3.request.crossfade
 import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
+import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 import java.text.SimpleDateFormat
@@ -50,7 +61,14 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun PetForm(pet: Pet, onPetChange: (Pet) -> Unit, modifier: Modifier = Modifier) {
+fun PetForm(
+	pet: Pet,
+	photos: List<PetPhoto>,
+	onPetChange: (Pet) -> Unit,
+	onAddPhoto: (String) -> Unit,
+	onRemovePhoto: (PetPhoto) -> Unit,
+	modifier: Modifier = Modifier
+) {
 	Column(
 		modifier = modifier,
 		horizontalAlignment = Alignment.Companion.CenterHorizontally,
@@ -83,6 +101,14 @@ fun PetForm(pet: Pet, onPetChange: (Pet) -> Unit, modifier: Modifier = Modifier)
 		IsSterilizedComboRow(
 			petIsSterilized = pet.wasSterilized,
 			onPetIsSterilizedChange = { wasSterilized -> onPetChange(pet.copy(wasSterilized = wasSterilized)) },
+		)
+
+		// Gallery Management
+		PhotoGalleryManagement(
+			photos = photos,
+			onAddPhoto = onAddPhoto,
+			onRemovePhoto = onRemovePhoto,
+			modifier = Modifier.fillMaxWidth()
 		)
 	}
 }
@@ -317,13 +343,104 @@ private fun DropDownIconButton(
 	}
 }
 
+@Composable
+fun PhotoGalleryManagement(
+	photos: List<PetPhoto>,
+	onAddPhoto: (String) -> Unit,
+	onRemovePhoto: (PetPhoto) -> Unit,
+	modifier: Modifier = Modifier
+) {
+	val context = LocalContext.current
+	val launcher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.GetMultipleContents(),
+		onResult = { uris ->
+			uris.forEach { uri ->
+				onAddPhoto(uri.toString())
+			}
+		}
+	)
+
+	Column(modifier = modifier) {
+		Row(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(vertical = 8.dp),
+			horizontalArrangement = Arrangement.SpaceBetween,
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			Text(
+				text = stringResource(R.string.photo_gallery),
+				style = MaterialTheme.typography.titleMedium
+			)
+
+			IconButton(
+				onClick = { launcher.launch("image/*") }
+			) {
+				Icon(
+					imageVector = Icons.Filled.Add,
+					contentDescription = stringResource(R.string.add_photos)
+				)
+			}
+		}
+
+		if (photos.isNotEmpty()) {
+			LazyRow(
+				horizontalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				items(photos) { photo ->
+					Box(
+						modifier = Modifier
+							.width(120.dp)
+							.height(120.dp)
+					) {
+						AsyncImage(
+							model = ImageRequest.Builder(context)
+								.data(photo.uri)
+								.crossfade(true)
+								.build(),
+							contentDescription = stringResource(R.string.pet_photo),
+							contentScale = ContentScale.Crop,
+							modifier = Modifier
+								.size(120.dp)
+								.clip(RoundedCornerShape(8.dp))
+								.background(MaterialTheme.colorScheme.surfaceVariant)
+						)
+
+						// Remove button
+						IconButton(
+							onClick = { onRemovePhoto(photo) },
+							modifier = Modifier
+								.align(Alignment.TopEnd)
+								.size(24.dp)
+								.background(
+									MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+									CircleShape
+								)
+						) {
+							Icon(
+								imageVector = Icons.Filled.Close,
+								contentDescription = stringResource(R.string.remove_photo),
+								tint = MaterialTheme.colorScheme.error,
+								modifier = Modifier.size(16.dp)
+							)
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PetFormPreview() {
 	TrabalhoDeApsTheme {
 		PetForm(
 			pet = Pet(name = "", species = Species.Cat),
+			photos = emptyList(),
 			onPetChange = { pet -> },
+			onAddPhoto = { uri -> },
+			onRemovePhoto = { photo -> }
 		)
 	}
 }

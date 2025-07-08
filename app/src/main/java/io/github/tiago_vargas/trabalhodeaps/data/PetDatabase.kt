@@ -6,16 +6,19 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.PetDao
+import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
+import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhotoDao
 import io.github.tiago_vargas.trabalhodeaps.data.vaccine.Vaccine
 import io.github.tiago_vargas.trabalhodeaps.data.vaccine.VaccineDao
 
 @Database(
-	entities = [Pet::class, Vaccine::class],
-	version = 3,
+	entities = [Pet::class, PetPhoto::class, Vaccine::class],
+	version = 5,
 	exportSchema = false,
 )
 abstract class PetDatabase : RoomDatabase() {
 	abstract fun petDao(): PetDao
+	abstract fun petPhotoDao(): PetPhotoDao
 	abstract fun vaccineDao(): VaccineDao
 
 	companion object {
