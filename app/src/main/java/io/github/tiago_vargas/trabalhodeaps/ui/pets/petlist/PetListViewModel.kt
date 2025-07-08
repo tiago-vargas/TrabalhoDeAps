@@ -7,11 +7,14 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import io.github.tiago_vargas.trabalhodeaps.data.LocalPetPhotoRepository
 import io.github.tiago_vargas.trabalhodeaps.data.LocalPetRepository
 import io.github.tiago_vargas.trabalhodeaps.data.PetDatabase
+import io.github.tiago_vargas.trabalhodeaps.data.PetPhotoRepository
 import io.github.tiago_vargas.trabalhodeaps.data.PetRepository
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
+import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +25,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PetListViewModel(private val repository: PetRepository) : ViewModel() {
+class PetListViewModel(
+	private val repository: PetRepository,
+	private val photoRepository: PetPhotoRepository
+) : ViewModel() {
 	private val _filter = MutableStateFlow(PetFilter())
 	val filter = _filter.asStateFlow()
 	val cachedPets = repository.getAllPets()
@@ -41,7 +47,10 @@ class PetListViewModel(private val repository: PetRepository) : ViewModel() {
 				val db = PetDatabase.getDatabase(
 					context = (this[APPLICATION_KEY] as Application).applicationContext,
 				)
-				PetListViewModel(repository = LocalPetRepository(petDao = db.petDao()))
+				PetListViewModel(
+					repository = LocalPetRepository(petDao = db.petDao()),
+					photoRepository = LocalPetPhotoRepository(petPhotoDao = db.petPhotoDao())
+				)
 			}
 		}
 	}
@@ -73,5 +82,16 @@ class PetListViewModel(private val repository: PetRepository) : ViewModel() {
 
 	fun toggleSterilized(value: Boolean) {
 		_filter.update { it.copy(wasSterilized = it.wasSterilized.toggle(value)) }
+	}
+
+	// Photo management methods
+	fun getPhotosForPet(petId: Int) = photoRepository.getPhotosForPet(petId)
+
+	fun addPhoto(petId: Int, uri: String) = viewModelScope.launch {
+		photoRepository.insert(PetPhoto(petId = petId, uri = uri))
+	}
+
+	fun removePhoto(photo: PetPhoto) = viewModelScope.launch {
+		photoRepository.delete(photo)
 	}
 }

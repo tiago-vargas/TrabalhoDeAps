@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
+import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
@@ -29,8 +30,11 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 @Composable
 fun EditPetScreen(
 	pet: Pet,
+	photos: List<PetPhoto>,
 	onDoneClicked: (Pet) -> Unit,
 	onDeleteClicked: (Pet) -> Unit,
+	onAddPhoto: (String) -> Unit,
+	onRemovePhoto: (PetPhoto) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	val (sandboxPet, setSandboxPet) = remember { mutableStateOf(pet.copy()) }
@@ -55,7 +59,10 @@ fun EditPetScreen(
 		) {
 			PetForm(
 				pet = sandboxPet,
+				photos = photos,
 				onPetChange = setSandboxPet,
+				onAddPhoto = onAddPhoto,
+				onRemovePhoto = onRemovePhoto,
 				modifier = modifier
 					.fillMaxWidth()
 					.padding(innerPadding),
@@ -95,6 +102,13 @@ fun EditPetScreenPreview() {
 		wasSterilized = false,
 	)
 	TrabalhoDeApsTheme {
-		EditPetScreen(pet, onDoneClicked = { pet -> }, onDeleteClicked = { pet -> })
+		EditPetScreen(
+			pet = pet,
+			photos = emptyList(),
+			onDoneClicked = { pet -> },
+			onDeleteClicked = { pet -> },
+			onAddPhoto = { },
+			onRemovePhoto = { }
+		)
 	}
 }

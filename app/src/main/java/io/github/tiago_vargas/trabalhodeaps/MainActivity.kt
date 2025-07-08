@@ -46,7 +46,6 @@ import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.EditVaccineScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
@@ -148,12 +147,17 @@ private fun NavGraphBuilder.petsGraph(
 			.getPet(id = id)
 			.collectAsState(initial = null)
 			.value
+		val photos = petListViewModel
+			.getPhotosForPet(petId = id)
+			.collectAsState(initial = emptyList())
+			.value
 		if (pet == null) {
 			// This prevents the app from crashing
 			LoadingScreen()
 		} else {
 			PetDetailsScreen(
 				pet = pet,
+				photos = photos,
 				onEditClicked = { navController.navigate(route = AppScreen.EditPet(petId = id)) },
 				onNavigateUp = { navController.navigateUp() },
 			)
@@ -174,12 +178,17 @@ private fun NavGraphBuilder.petsGraph(
 			.getPet(id = id)
 			.collectAsState(initial = null)
 			.value
+		val photos = petListViewModel
+			.getPhotosForPet(petId = id)
+			.collectAsState(initial = emptyList())
+			.value
 		if (pet == null) {
 			// This prevents the app from crashing
 			LoadingScreen()
 		} else {
 			EditPetScreen(
 				pet = pet,
+				photos = photos,
 				onDoneClicked = { pet ->
 					petListViewModel.updatePet(pet)
 					navController.navigateUp()
@@ -188,6 +197,12 @@ private fun NavGraphBuilder.petsGraph(
 					petListViewModel.deletePet(pet)
 					navController.popBackStack(route = AppScreen.PetList, inclusive = false)
 				},
+				onAddPhoto = { uri ->
+					petListViewModel.addPhoto(id, uri)
+				},
+				onRemovePhoto = { photo ->
+					petListViewModel.removePhoto(photo)
+				}
 			)
 		}
 	}

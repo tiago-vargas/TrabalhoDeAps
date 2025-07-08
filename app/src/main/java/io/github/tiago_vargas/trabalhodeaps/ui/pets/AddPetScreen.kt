@@ -37,7 +37,10 @@ fun AddPetScreen(onDoneClicked: (Pet) -> Unit, modifier: Modifier = Modifier) {
 	) { innerPadding ->
 		PetForm(
 			pet = pet,
+			photos = emptyList(), // New pets have no photos initially
 			onPetChange = setPet,
+			onAddPhoto = { /* No-op for new pets */ },
+			onRemovePhoto = { /* No-op for new pets */ },
 			modifier = modifier
 				.fillMaxWidth()
 				.verticalScroll(scrollState)
