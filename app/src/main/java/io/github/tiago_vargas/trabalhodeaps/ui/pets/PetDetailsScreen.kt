@@ -1,10 +1,12 @@
 package io.github.tiago_vargas.trabalhodeaps.ui.pets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -19,10 +21,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
@@ -44,7 +52,7 @@ fun PetDetailsScreen(
 			modifier = Modifier.padding(innerPadding),
 			horizontalAlignment = Alignment.CenterHorizontally,
 		) {
-			Banner(pet.name)
+			Banner(pet.name, pet.profilePictureUri)
 
 			Column(modifier = Modifier.padding(16.dp)) {
 				PropertyRow(
@@ -107,16 +115,32 @@ private fun TopBar(
 }
 
 @Composable
-fun Banner(petName: String, modifier: Modifier = Modifier) {
+fun Banner(petName: String, profilePictureUri: String?, modifier: Modifier = Modifier) {
+	val context = LocalContext.current
 	Column(
 		modifier = modifier,
 		horizontalAlignment = Alignment.CenterHorizontally,
 	) {
-		Icon(
-			imageVector = Icons.Filled.Person,
-			contentDescription = null,
-			modifier = Modifier.size(200.dp),
-		)
+		if (profilePictureUri != null) {
+			AsyncImage(
+				model = ImageRequest.Builder(context)
+					.data(profilePictureUri)
+					.crossfade(true)
+					.build(),
+				contentDescription = stringResource(R.string.pet_profile_picture),
+				contentScale = ContentScale.Crop,
+				modifier = Modifier
+					.size(200.dp)
+					.clip(CircleShape)
+					.background(MaterialTheme.colorScheme.surfaceVariant),
+			)
+		} else {
+			Icon(
+				imageVector = Icons.Filled.Person,
+				contentDescription = null,
+				modifier = Modifier.size(200.dp),
+			)
+		}
 		Text(
 			petName,
 			fontWeight = FontWeight.ExtraBold,

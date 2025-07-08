@@ -11,7 +11,7 @@ import io.github.tiago_vargas.trabalhodeaps.data.vaccine.VaccineDao
 
 @Database(
 	entities = [Pet::class, Vaccine::class],
-	version = 2,
+	version = 3,
 	exportSchema = false,
 )
 abstract class PetDatabase : RoomDatabase() {

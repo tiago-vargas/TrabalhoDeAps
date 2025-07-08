@@ -33,4 +33,6 @@
 	<string name="add_photo">Attach Image</string>
 	<string name="ask_something">Ask Something…</string>
 	<string name="send_prompt">Send prompt</string>
+	<string name="pet_profile_picture">Pet Profile Picture</string>
+	<string name="add_profile_picture">Add Profile Picture</string>
 </resources>

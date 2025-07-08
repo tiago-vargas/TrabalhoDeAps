@@ -34,4 +34,6 @@
 	<string name="add_photo">Anexar Imagem</string>
 	<string name="ask_something">Pergunte Alguma Coisa…</string>
 	<string name="send_prompt">Enviar prompt</string>
+	<string name="pet_profile_picture">Foto do Perfil do Pet</string>
+	<string name="add_profile_picture">Adicionar Foto do Perfil</string>
 </resources>

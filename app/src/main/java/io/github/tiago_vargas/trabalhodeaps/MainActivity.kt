@@ -46,8 +46,6 @@ import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.EditVaccineScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineDetailsScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListScreen
 import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.vaccinelist.VaccineListViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {

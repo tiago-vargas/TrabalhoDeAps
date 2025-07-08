@@ -13,6 +13,7 @@ data class Pet(
 	val weight: Double = 0.0,
 	val gender: Gender = Gender.Male,
 	val wasSterilized: Boolean = false,
+	val profilePictureUri: String? = null,
 )
 
 enum class Species {

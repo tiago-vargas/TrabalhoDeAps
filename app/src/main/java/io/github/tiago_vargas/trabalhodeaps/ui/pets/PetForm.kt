@@ -1,9 +1,15 @@
 package io.github.tiago_vargas.trabalhodeaps.ui.pets
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
@@ -16,6 +22,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -24,9 +31,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
@@ -43,7 +56,10 @@ fun PetForm(pet: Pet, onPetChange: (Pet) -> Unit, modifier: Modifier = Modifier)
 		horizontalAlignment = Alignment.Companion.CenterHorizontally,
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 	) {
-		Avatar()
+		Avatar(
+			profilePictureUri = pet.profilePictureUri,
+			onProfilePictureChange = { uri -> onPetChange(pet.copy(profilePictureUri = uri)) }
+		)
 		NameEntryRow(
 			petName = pet.name,
 			onPetNameChange = { name -> onPetChange(pet.copy(name = name)) },
@@ -72,12 +88,47 @@ fun PetForm(pet: Pet, onPetChange: (Pet) -> Unit, modifier: Modifier = Modifier)
 }
 
 @Composable
-fun Avatar(modifier: Modifier = Modifier) {
-	Icon(
-		imageVector = Icons.Filled.Person,
-		contentDescription = null,
-		modifier = modifier.size(200.dp),
+fun Avatar(
+	profilePictureUri: String?,
+	onProfilePictureChange: (String?) -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	val context = LocalContext.current
+	val launcher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.GetContent(),
+		onResult = { uri: Uri? ->
+			onProfilePictureChange(uri?.toString())
+		},
 	)
+
+	Box(
+		modifier = modifier
+			.size(200.dp)
+			.clip(CircleShape)
+			.clickable { launcher.launch("image/*") },
+		contentAlignment = Alignment.Center,
+	) {
+		if (profilePictureUri != null) {
+			AsyncImage(
+				model = ImageRequest.Builder(context)
+					.data(profilePictureUri)
+					.crossfade(true)
+					.build(),
+				contentDescription = stringResource(R.string.pet_profile_picture),
+				contentScale = ContentScale.Crop,
+				modifier = Modifier
+					.size(200.dp)
+					.clip(CircleShape)
+			)
+		} else {
+			Icon(
+				imageVector = Icons.Filled.Person,
+				contentDescription = stringResource(R.string.add_profile_picture),
+				modifier = Modifier.size(200.dp),
+				tint = MaterialTheme.colorScheme.onSurfaceVariant
+			)
+		}
+	}
 }
 
 @Composable
