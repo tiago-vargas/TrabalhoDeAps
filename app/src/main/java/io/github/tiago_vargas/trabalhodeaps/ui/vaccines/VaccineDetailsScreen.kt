@@ -56,7 +56,8 @@ fun VaccineDetailsScreen(
 				)
 				PropertyRow(
 					stringResource(R.string.form_field_shot_date),
-					vaccine.date.toString(),
+					java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+						.format(java.util.Date(vaccine.date)),
 					modifier = Modifier.fillMaxWidth()
 				)
 			}

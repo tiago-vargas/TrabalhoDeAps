@@ -74,7 +74,8 @@ fun PetDetailsScreen(
 				)
 				PropertyRow(
 					"Birth Date",
-					pet.birthDate.toString(),
+					java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+						.format(java.util.Date(pet.birthDate)),
 					modifier = Modifier.fillMaxWidth()
 				)
 				PropertyRow(
