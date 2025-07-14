@@ -30,4 +30,7 @@ interface VaccineDao {
 
 	@Query("DELETE FROM vaccines WHERE petId = :petId")
 	suspend fun deleteAllVaccinesForPet(petId: Int)
+
+	@Query("SELECT DISTINCT petId FROM vaccines")
+	fun getPetIdsWithVaccines(): Flow<List<Int>>
 }

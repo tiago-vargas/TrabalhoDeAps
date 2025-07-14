@@ -12,4 +12,5 @@ class LocalVaccineRepository(private val vaccineDao: VaccineDao) : VaccineReposi
 	override fun getVaccine(id: Int): Flow<Vaccine> = vaccineDao.getById(id)
 	override fun getVaccinesForPet(petId: Int): Flow<List<Vaccine>> = vaccineDao.getVaccinesForPet(petId)
 	override suspend fun deleteAllVaccinesForPet(petId: Int) = vaccineDao.deleteAllVaccinesForPet(petId)
+	override fun getPetIdsWithVaccines(): Flow<List<Int>> = vaccineDao.getPetIdsWithVaccines()
 }

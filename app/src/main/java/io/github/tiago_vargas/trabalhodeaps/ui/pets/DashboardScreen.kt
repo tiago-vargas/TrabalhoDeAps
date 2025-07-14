@@ -22,12 +22,18 @@ fun Dashboard(
 	petListViewModel: PetListViewModel = viewModel(factory = PetListViewModel.Factory),
 ) {
 	val pets = petListViewModel.cachedPets.collectAsState(initial = emptyList()).value
+	val petIdsWithVaccines = petListViewModel.getPetIdsWithVaccines().collectAsState(initial = emptyList()).value
+	
 	val catCount = pets.count { it.species == Species.Cat }
 	val dogCount = pets.count { it.species == Species.Dog }
 	val sterilizedCount = pets.count { it.wasSterilized }
 	val nonSterilizedCount = pets.count { !it.wasSterilized }
 	val maleCount = pets.count { it.gender == Gender.Male }
 	val femaleCount = pets.count { it.gender == Gender.Female }
+	
+	// Vaccination statistics
+	val vaccinatedPetsCount = pets.count { pet -> petIdsWithVaccines.contains(pet.id) }
+	val unvaccinatedPetsCount = pets.size - vaccinatedPetsCount
 
 	Column (
 		modifier = modifier
@@ -42,6 +48,8 @@ fun Dashboard(
 		Text("Not Sterilized: $nonSterilizedCount")
 		Text("Male: $maleCount")
 		Text("Female: $femaleCount")
+		Text("Vaccinated Pets: $vaccinatedPetsCount")
+		Text("Unvaccinated Pets: $unvaccinatedPetsCount")
 	}
 }
 

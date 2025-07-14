@@ -101,4 +101,5 @@ class PetListViewModel(
 
 	// Vaccine methods
 	fun getVaccinesForPet(petId: Int) = vaccineRepository.getVaccinesForPet(petId)
+	fun getPetIdsWithVaccines() = vaccineRepository.getPetIdsWithVaccines()
 }
