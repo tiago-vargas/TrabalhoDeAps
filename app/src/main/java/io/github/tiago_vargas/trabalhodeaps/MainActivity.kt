@@ -188,6 +188,10 @@ private fun NavGraphBuilder.petsGraph(
 			.getPhotosForPet(petId = id)
 			.collectAsState(initial = emptyList())
 			.value
+		val vaccines = petListViewModel
+			.getVaccinesForPet(petId = id)
+			.collectAsState(initial = emptyList())
+			.value
 		if (pet == null) {
 			// This prevents the app from crashing
 			LoadingScreen()
@@ -195,6 +199,7 @@ private fun NavGraphBuilder.petsGraph(
 			EditPetScreen(
 				pet = pet,
 				photos = photos,
+				vaccines = vaccines,
 				onDoneClicked = { pet ->
 					petListViewModel.updatePet(pet)
 					navController.navigateUp()
@@ -208,6 +213,9 @@ private fun NavGraphBuilder.petsGraph(
 				},
 				onRemovePhoto = { photo ->
 					petListViewModel.removePhoto(photo)
+				},
+				onAddVaccine = {
+					navController.navigate(AppScreen.AddVaccineForPet(petId = id))
 				}
 			)
 		}

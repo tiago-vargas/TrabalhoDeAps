@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -110,7 +111,7 @@ fun PetDetailsScreen(
 				// Vaccines Section
 				if (vaccines.isNotEmpty()) {
 					Text(
-						text = stringResource(R.string.vaccine_list_description),
+						text = stringResource(R.string.vaccines),
 						style = MaterialTheme.typography.titleMedium,
 						modifier = Modifier.padding(vertical = 8.dp)
 					)
@@ -276,6 +277,12 @@ fun PetDetailsScreenPreview() {
 	val vaccines = emptyList<Vaccine>()
 
 	TrabalhoDeApsTheme {
-		PetDetailsScreen(pet = pet, photos = photos, vaccines = vaccines, onEditClicked = {}, onNavigateUp = {})
+		PetDetailsScreen(
+			pet = pet,
+			photos = photos,
+			vaccines = vaccines,
+			onEditClicked = {},
+			onNavigateUp = {}
+		)
 	}
 }
