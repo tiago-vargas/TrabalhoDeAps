@@ -85,6 +85,7 @@ private fun BottomBar(onDoneClicked: () -> Unit, modifier: Modifier = Modifier) 
 @Composable
 fun EditVaccineScreenPreview() {
 	val vaccine = Vaccine(
+		petId = 0,
 		name = "Cashew",
 		description = "This vaccine is about preventing this and this",
 		date = 1_700_000_000_000L,

@@ -24,4 +24,10 @@ interface VaccineDao {
 
 	@Query("SELECT * FROM vaccines WHERE id = :id")
 	fun getById(id: Int): Flow<Vaccine>
+
+	@Query("SELECT * FROM vaccines WHERE petId = :petId ORDER BY date DESC")
+	fun getVaccinesForPet(petId: Int): Flow<List<Vaccine>>
+
+	@Query("DELETE FROM vaccines WHERE petId = :petId")
+	suspend fun deleteAllVaccinesForPet(petId: Int)
 }

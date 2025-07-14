@@ -2,6 +2,7 @@ package io.github.tiago_vargas.trabalhodeaps.ui.vaccines
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
@@ -139,7 +140,7 @@ fun DateActionRow(
 fun VaccineFormPreview() {
 	TrabalhoDeApsTheme {
 		VaccineForm(
-			vaccine = Vaccine(name = "", description = ""),
+			vaccine = Vaccine(petId = 0, name = "", description = ""),
 			onVaccineChange = { vaccine -> },
 		)
 	}

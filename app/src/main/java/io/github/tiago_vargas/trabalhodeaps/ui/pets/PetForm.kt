@@ -289,7 +289,7 @@ fun IsSterilizedComboRow(
 
 
 @Composable
-private fun <T> ComboRow(
+fun <T> ComboRow(
 	value: T,
 	onEntryChosen: (T) -> Unit,
 	label: String,
@@ -299,7 +299,7 @@ private fun <T> ComboRow(
 	entryToString: @Composable (T) -> String = { e -> e.toString() },
 ) {
 	val dropdownMenuIsExpanded = remember { mutableStateOf(false) }
-	Box(modifier = modifier, contentAlignment = Alignment.Companion.TopEnd) {
+	Box(modifier = modifier, contentAlignment = Alignment.Companion.Center) {
 		OutlinedTextField(
 			value = entryToString(value),
 			onValueChange = { s -> },

@@ -13,7 +13,7 @@ import io.github.tiago_vargas.trabalhodeaps.data.vaccine.VaccineDao
 
 @Database(
 	entities = [Pet::class, PetPhoto::class, Vaccine::class],
-	version = 5,
+	version = 6,
 	exportSchema = false,
 )
 abstract class PetDatabase : RoomDatabase() {
@@ -32,6 +32,7 @@ abstract class PetDatabase : RoomDatabase() {
 					PetDatabase::class.java,
 					"pet_database",
 				)
+//				.fallbackToDestructiveMigration()
 				.build()
 				.also { Instance = it }
 			}

@@ -16,6 +16,8 @@ import io.github.tiago_vargas.trabalhodeaps.data.pet.Gender
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.LocalVaccineRepository
+import io.github.tiago_vargas.trabalhodeaps.ui.vaccines.VaccineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +29,8 @@ import kotlinx.coroutines.launch
 
 class PetListViewModel(
 	private val repository: PetRepository,
-	private val photoRepository: PetPhotoRepository
+	private val photoRepository: PetPhotoRepository,
+	private val vaccineRepository: VaccineRepository
 ) : ViewModel() {
 	private val _filter = MutableStateFlow(PetFilter())
 	val filter = _filter.asStateFlow()
@@ -49,7 +52,8 @@ class PetListViewModel(
 				)
 				PetListViewModel(
 					repository = LocalPetRepository(petDao = db.petDao()),
-					photoRepository = LocalPetPhotoRepository(petPhotoDao = db.petPhotoDao())
+					photoRepository = LocalPetPhotoRepository(petPhotoDao = db.petPhotoDao()),
+					vaccineRepository = LocalVaccineRepository(vaccineDao = db.vaccineDao())
 				)
 			}
 		}
@@ -94,4 +98,7 @@ class PetListViewModel(
 	fun removePhoto(photo: PetPhoto) = viewModelScope.launch {
 		photoRepository.delete(photo)
 	}
+
+	// Vaccine methods
+	fun getVaccinesForPet(petId: Int) = vaccineRepository.getVaccinesForPet(petId)
 }

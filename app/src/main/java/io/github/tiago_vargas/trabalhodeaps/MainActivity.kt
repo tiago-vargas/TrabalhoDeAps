@@ -94,7 +94,8 @@ fun Content(
 
 	NavHost(
 		navController = navController,
-		startDestination = AppScreen.Login,
+//		startDestination = AppScreen.Login,
+		startDestination = AppScreen.PetList,
 		modifier = modifier,
 	) {
 		loginGraph(
@@ -151,6 +152,10 @@ private fun NavGraphBuilder.petsGraph(
 			.getPhotosForPet(petId = id)
 			.collectAsState(initial = emptyList())
 			.value
+		val vaccines = petListViewModel
+			.getVaccinesForPet(petId = id)
+			.collectAsState(initial = emptyList())
+			.value
 		if (pet == null) {
 			// This prevents the app from crashing
 			LoadingScreen()
@@ -158,6 +163,7 @@ private fun NavGraphBuilder.petsGraph(
 			PetDetailsScreen(
 				pet = pet,
 				photos = photos,
+				vaccines = vaccines,
 				onEditClicked = { navController.navigate(route = AppScreen.EditPet(petId = id)) },
 				onNavigateUp = { navController.navigateUp() },
 			)
@@ -240,6 +246,18 @@ private fun NavGraphBuilder.vaccinesGraph(
 	}
 	composable<AppScreen.AddVaccine> {
 		AddVaccineScreen(
+			petId = null, // Global vaccine, not tied to a specific pet
+			onDoneClicked = { vaccine ->
+				vaccineListViewModel.insertVaccine(vaccine)
+				navController.navigateUp()
+			},
+		)
+	}
+	composable<AppScreen.AddVaccineForPet> { navBackStackEntry ->
+		val addVaccineForPet = navBackStackEntry.toRoute<AppScreen.AddVaccineForPet>()
+		val petId = addVaccineForPet.petId
+		AddVaccineScreen(
+			petId = petId,
 			onDoneClicked = { vaccine ->
 				vaccineListViewModel.insertVaccine(vaccine)
 				navController.navigateUp()
@@ -326,6 +344,9 @@ private sealed class AppScreen {
 
 	@Serializable
 	data object AddVaccine : AppScreen()
+
+	@Serializable
+	data class AddVaccineForPet(val petId: Int) : AppScreen()
 
 	@Serializable
 	data class VaccineDetails(val vaccineId: Int) : AppScreen()

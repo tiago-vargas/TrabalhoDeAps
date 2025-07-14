@@ -110,7 +110,7 @@ fun Banner(vaccineName: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun VaccineDetailsScreenPreview() {
-	val vaccine = Vaccine(name = "Antirrábica", description = "Vacina contra raiva")
+	val vaccine = Vaccine(petId = 0, name = "Antirrábica", description = "Vacina contra raiva")
 
 	TrabalhoDeApsTheme {
 		VaccineDetailsScreen(vaccine = vaccine, onEditClicked = {}, onNavigateUp = {})

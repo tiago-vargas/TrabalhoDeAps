@@ -3,12 +3,14 @@ package io.github.tiago_vargas.trabalhodeaps.ui.pets
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -41,6 +43,7 @@ import io.github.tiago_vargas.trabalhodeaps.R
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Pet
 import io.github.tiago_vargas.trabalhodeaps.data.pet.PetPhoto
 import io.github.tiago_vargas.trabalhodeaps.data.pet.Species
+import io.github.tiago_vargas.trabalhodeaps.data.vaccine.Vaccine
 import io.github.tiago_vargas.trabalhodeaps.ui.PropertyRow
 import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 
@@ -48,6 +51,7 @@ import io.github.tiago_vargas.trabalhodeaps.ui.theme.TrabalhoDeApsTheme
 fun PetDetailsScreen(
 	pet: Pet,
 	photos: List<PetPhoto>,
+	vaccines: List<Vaccine>,
 	onEditClicked: () -> Unit,
 	onNavigateUp: () -> Unit,
 	modifier: Modifier = Modifier,
@@ -98,6 +102,19 @@ fun PetDetailsScreen(
 					)
 					PhotoGallery(
 						photos = photos,
+						modifier = Modifier.fillMaxWidth()
+					)
+				}
+
+				// Vaccines Section
+				if (vaccines.isNotEmpty()) {
+					Text(
+						text = stringResource(R.string.vaccine_list_description),
+						style = MaterialTheme.typography.titleMedium,
+						modifier = Modifier.padding(vertical = 8.dp)
+					)
+					VaccineList(
+						vaccines = vaccines,
 						modifier = Modifier.fillMaxWidth()
 					)
 				}
@@ -199,13 +216,65 @@ fun PhotoGallery(
 	}
 }
 
+@Composable
+fun VaccineList(
+	vaccines: List<Vaccine>,
+	modifier: Modifier = Modifier
+) {
+	LazyColumn(
+		modifier = modifier,
+		verticalArrangement = Arrangement.spacedBy(8.dp)
+	) {
+		items(vaccines) { vaccine ->
+			VaccineItem(vaccine = vaccine)
+		}
+	}
+}
+
+@Composable
+fun VaccineItem(
+	vaccine: Vaccine,
+	modifier: Modifier = Modifier
+) {
+	Column(
+		modifier = modifier
+			.fillMaxWidth()
+			.background(
+				MaterialTheme.colorScheme.surfaceVariant,
+				RoundedCornerShape(8.dp)
+			)
+			.padding(12.dp)
+	) {
+		Text(
+			text = vaccine.name,
+			style = MaterialTheme.typography.titleMedium,
+			fontWeight = FontWeight.Bold
+		)
+		if (vaccine.description.isNotEmpty()) {
+			Text(
+				text = vaccine.description,
+				style = MaterialTheme.typography.bodyMedium,
+				modifier = Modifier.padding(top = 4.dp)
+			)
+		}
+		Text(
+			text = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+				.format(java.util.Date(vaccine.date)),
+			style = MaterialTheme.typography.bodySmall,
+			color = MaterialTheme.colorScheme.onSurfaceVariant,
+			modifier = Modifier.padding(top = 4.dp)
+		)
+	}
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PetDetailsScreenPreview() {
 	val pet = Pet(name = "Cashew", species = Species.Cat)
 	val photos = emptyList<PetPhoto>()
+	val vaccines = emptyList<Vaccine>()
 
 	TrabalhoDeApsTheme {
-		PetDetailsScreen(pet = pet, photos = photos, onEditClicked = {}, onNavigateUp = {})
+		PetDetailsScreen(pet = pet, photos = photos, vaccines = vaccines, onEditClicked = {}, onNavigateUp = {})
 	}
 }
