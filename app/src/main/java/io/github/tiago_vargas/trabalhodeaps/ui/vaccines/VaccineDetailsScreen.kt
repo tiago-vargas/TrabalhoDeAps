@@ -45,11 +45,6 @@ fun VaccineDetailsScreen(
 
 			Column(modifier = Modifier.padding(16.dp)) {
 				PropertyRow(
-					stringResource(R.string.form_field_name),
-					vaccine.name,
-					modifier = Modifier.fillMaxWidth(),
-				)
-				PropertyRow(
 					stringResource(R.string.form_field_description),
 					vaccine.description,
 					modifier = Modifier.fillMaxWidth(),
