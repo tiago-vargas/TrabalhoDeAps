@@ -36,13 +36,13 @@ class PetListViewModel(
 	val filter = _filter.asStateFlow()
 	val cachedPets = repository.getAllPets()
 	private val petIdsWithVaccines = vaccineRepository.getPetIdsWithVaccines()
-	
+
 	val filteredPets = combine(cachedPets, filter, petIdsWithVaccines) { pets, filter, vaccinatedPetIds ->
 		pets.filter { pet ->
 			(filter.species.isEmpty() || pet.species in filter.species)
 					&& (filter.gender.isEmpty() || pet.gender in filter.gender)
 					&& (filter.wasSterilized.isEmpty() || pet.wasSterilized in filter.wasSterilized)
-					&& (filter.vaccinationStatus.isEmpty() || 
+					&& (filter.vaccinationStatus.isEmpty() ||
 						filter.vaccinationStatus.any { status ->
 							when (status) {
 								VaccinationStatus.Vaccinated -> vaccinatedPetIds.contains(pet.id)
