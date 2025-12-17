@@ -94,8 +94,8 @@ fun Content(
 
 	NavHost(
 		navController = navController,
-//		startDestination = AppScreen.Login,
-		startDestination = AppScreen.PetList,
+		startDestination = AppScreen.Login,
+//		startDestination = AppScreen.PetList,
 		modifier = modifier,
 	) {
 		loginGraph(

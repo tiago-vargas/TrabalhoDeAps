@@ -44,4 +44,7 @@
 	<string name="no_pets_available">No pets available. Please add a pet first.</string>
 	<string name="select_pet">Select Pet</string>
 	<string name="no_vaccines_yet">No vaccines yet</string>
+	<string name="vaccination_status">Vaccination Status</string>
+	<string name="vaccinated">Vaccinated</string>
+	<string name="unvaccinated">Unvaccinated</string>
 </resources>

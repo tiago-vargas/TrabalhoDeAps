@@ -35,11 +35,20 @@ class PetListViewModel(
 	private val _filter = MutableStateFlow(PetFilter())
 	val filter = _filter.asStateFlow()
 	val cachedPets = repository.getAllPets()
-	val filteredPets = combine(cachedPets, filter) { pets, filter ->
+	private val petIdsWithVaccines = vaccineRepository.getPetIdsWithVaccines()
+	
+	val filteredPets = combine(cachedPets, filter, petIdsWithVaccines) { pets, filter, vaccinatedPetIds ->
 		pets.filter { pet ->
 			(filter.species.isEmpty() || pet.species in filter.species)
 					&& (filter.gender.isEmpty() || pet.gender in filter.gender)
 					&& (filter.wasSterilized.isEmpty() || pet.wasSterilized in filter.wasSterilized)
+					&& (filter.vaccinationStatus.isEmpty() || 
+						filter.vaccinationStatus.any { status ->
+							when (status) {
+								VaccinationStatus.Vaccinated -> vaccinatedPetIds.contains(pet.id)
+								VaccinationStatus.Unvaccinated -> !vaccinatedPetIds.contains(pet.id)
+							}
+						})
 		}
 	}
 	.stateIn(viewModelScope, started = SharingStarted.Lazily, initialValue = emptyList())
@@ -86,6 +95,10 @@ class PetListViewModel(
 
 	fun toggleSterilized(value: Boolean) {
 		_filter.update { it.copy(wasSterilized = it.wasSterilized.toggle(value)) }
+	}
+
+	fun toggleVaccinationStatus(status: VaccinationStatus) {
+		_filter.update { it.copy(vaccinationStatus = it.vaccinationStatus.toggle(status)) }
 	}
 
 	// Photo management methods

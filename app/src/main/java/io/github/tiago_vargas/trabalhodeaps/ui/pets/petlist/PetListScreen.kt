@@ -64,6 +64,7 @@ fun PetListScreen(
 						onSpeciesToggle = viewModel::toggleSpecies,
 						onGenderToggle = viewModel::toggleGender,
 						onSterilizedToggle = viewModel::toggleSterilized,
+						onVaccinationStatusToggle = viewModel::toggleVaccinationStatus,
 						modifier = Modifier.padding(12.dp)
 					)
 				}
@@ -123,6 +124,7 @@ fun FilterSelector(
 	onSpeciesToggle: (Species) -> Unit,
 	onGenderToggle: (Gender) -> Unit,
 	onSterilizedToggle: (Boolean) -> Unit,
+	onVaccinationStatusToggle: (VaccinationStatus) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	Column(modifier = modifier) {
@@ -140,6 +142,11 @@ fun FilterSelector(
 			options = listOf(true, false),
 			onOptionSelected = onSterilizedToggle,
 			header = stringResource(R.string.form_field_is_sterilized),
+		)
+		FilterSection(
+			options = VaccinationStatus.entries,
+			onOptionSelected = onVaccinationStatusToggle,
+			header = stringResource(R.string.vaccination_status),
 		)
 	}
 }
@@ -162,7 +169,10 @@ fun <T> FilterSection(
 						selected.value = !selected.value
 						onOptionSelected(option)
 					},
-					label = option.toString(),
+					label = when (option) {
+						is VaccinationStatus -> option.toDisplayString()
+						else -> option.toString()
+					},
 				)
 			}
 		}
@@ -218,5 +228,12 @@ fun FilterSelectorPreview() {
 		onSpeciesToggle = {},
 		onGenderToggle = {},
 		onSterilizedToggle = {},
+		onVaccinationStatusToggle = {},
 	)
+}
+
+@Composable
+fun VaccinationStatus.toDisplayString(): String = when (this) {
+	VaccinationStatus.Vaccinated -> stringResource(R.string.vaccinated)
+	VaccinationStatus.Unvaccinated -> stringResource(R.string.unvaccinated)
 }

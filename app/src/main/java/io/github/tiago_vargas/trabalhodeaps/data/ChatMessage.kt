@@ -26,7 +26,8 @@ object ChatData {
 			modelName = "gemini-1.5-pro-latest",
 			apiKey = API_KEY,
 			systemInstruction = content {
-				text("You are a pet expert assistant. Only answer questions about cats, dogs, and other pets. If asked about anything else, politely redirect the conversation back to pets.")
+//				text("You are a pet expert assistant. Only answer questions about cats, dogs, and other pets. If asked about anything else, politely redirect the conversation back to pets.")
+				text("Você é um assistente especialista em animais de estimação. Responda apenas a perguntas sobre gatos, cães e outros animais de estimação. Se for perguntado sobre qualquer outra coisa, educadamente redirecione a conversa de volta para animais de estimação.")
 			},
 		)
 
@@ -57,13 +58,22 @@ object ChatData {
 			modelName = "gemini-1.5-flash",
 			apiKey = API_KEY,
 			systemInstruction = content {
+//				text(
+//					"""
+//					You are a pet image analyzer. Only analyze and respond to images that contain:
+//					- Cats, dogs, or other pets
+//					- Pet toys, food, or accessories
+//					- Pet-related environments (kennels, pet beds, etc.)
+//					If the image doesn't contain pet-related content, respond: "I can only analyze pet-related images. Please share a photo of pets, pet food, toys, or accessories."
+//					"""
+//				)
 				text(
 					"""
-					You are a pet image analyzer. Only analyze and respond to images that contain:
-					- Cats, dogs, or other pets
-					- Pet toys, food, or accessories
-					- Pet-related environments (kennels, pet beds, etc.)
-					If the image doesn't contain pet-related content, respond: "I can only analyze pet-related images. Please share a photo of pets, pet food, toys, or accessories."
+					Você é um analisador de imagens de animais de estimação. Analise e responda apenas a imagens que contenham:
+					- Gatos, cães ou outros animais de estimação
+					- Brinquedos, comida ou acessórios para animais de estimação
+					- Ambientes relacionados a animais de estimação (caseiros, camas para animais de estimação, etc.)
+					Se a imagem não contiver conteúdo relacionado a animais de estimação, responda: "Só posso analisar imagens relacionadas a animais de estimação. Compartilhe uma foto de animais de estimação, comida, brinquedos ou acessórios."
 					"""
 				)
 			},
